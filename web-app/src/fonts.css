@@ -1,0 +1,76 @@
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_W_Rg.woff2') format('woff2'),
+       url('/fonts/AmazonEmber_W_Rg.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_W_Bd.woff2') format('woff2'),
+       url('/fonts/AmazonEmber_W_Bd.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_W_It.woff2') format('woff2'),
+       url('/fonts/AmazonEmber_W_It.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_W_BdIt.woff2') format('woff2'),
+       url('/fonts/AmazonEmber_W_BdIt.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_W_Lt.woff2') format('woff2'),
+       url('/fonts/AmazonEmber_W_Lt.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_W_LtIt.woff2') format('woff2'),
+       url('/fonts/AmazonEmber_W_LtIt.woff') format('woff');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_W_Md.woff2') format('woff2'),
+       url('/fonts/AmazonEmber_W_Md.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Amazon Ember';
+  src: url('/fonts/AmazonEmber_W_MdIt.woff2') format('woff2'),
+       url('/fonts/AmazonEmber_W_MdIt.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Amazon Ember Mono';
+  src: url('/fonts/AmazonEmberMono_W_Rg.woff2') format('woff2'),
+       url('/fonts/AmazonEmberMono_W_Rg.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Fallback to system fonts if Amazon Ember is not available */
+body {
+  font-family: 'Amazon Ember', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}

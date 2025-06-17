@@ -1,0 +1,43 @@
+.flex {
+  display: flex;
+  flex: 1;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+.flex-column {
+  flex-direction: column;
+}
+
+.container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  padding: 16px;
+  background: #0f1b2a;
+  color: #d1d5db;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+}
+
+img {
+  margin-right: 16px;
+}
+
+a {
+  text-decoration: none;
+  color: #d1d5db;
+}
+.copyright {
+  text-align: right;
+  max-width: 220px;
+}
+
+.font-size-10 {
+  font-size: 10px;
+}

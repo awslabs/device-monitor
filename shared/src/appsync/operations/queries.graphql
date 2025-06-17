@@ -1,0 +1,271 @@
+# This file uses GraphQL syntax. To generate TypeScript types from this file, run `npm run codegen` in the root directory.
+
+query ListThings(
+  $limit: Int
+  $nextToken: String
+  $filter: FilterResolverInput
+) {
+  listThings(limit: $limit, nextToken: $nextToken, filter: $filter) {
+    items {
+      thingName
+      deviceType
+      connected
+      lastConnectedAt
+      disconnectReason
+      provisioningTimestamp
+      productionTimestamp
+      brandName
+      country
+      hasApplianceFW
+      firmwareType
+      firmwareVersion
+      thingGroupNames
+    }
+    nextToken
+  }
+}
+
+query ListJobs($limit: Int, $nextToken: String) {
+  listJobs(limit: $limit, nextToken: $nextToken) {
+    items {
+      jobId
+      status
+      createdAt
+      lastUpdatedAt
+      completedAt
+    }
+    nextToken
+  }
+}
+
+query ListJobExecutionsForJob(
+  $jobId: String!
+  $limit: Int
+  $nextToken: String
+) {
+  listJobExecutionsForJob(jobId: $jobId, limit: $limit, nextToken: $nextToken) {
+    items {
+      thingName
+      lastUpdatedAt
+      queuedAt
+      retryAttempt
+      startedAt
+      status
+    }
+    nextToken
+  }
+}
+
+query ListJobExecutionsForThing(
+  $thingName: String!
+  $limit: Int
+  $nextToken: String
+) {
+  listJobExecutionsForThing(
+    thingName: $thingName
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      jobId
+      lastUpdatedAt
+      queuedAt
+      retryAttempt
+      startedAt
+      status
+    }
+    nextToken
+  }
+}
+
+query GetJobDetails($jobId: String!) {
+  getJobDetails(jobId: $jobId) {
+    targetSelection
+    status
+    targets
+    description
+    maximumRatePerMinute
+    baseRatePerMinute
+    abortThresholdPercentage
+    createdAt
+    lastUpdatedAt
+    completedAt
+    stats {
+      canceled
+      succeeded
+      failed
+      rejected
+      queued
+      inProgress
+      removed
+      timedOut
+    }
+    inProgressTimeoutInMinutes
+    numberOfRetries
+  }
+}
+
+query GetDevice($thingName: String!) {
+  getDevice(thingName: $thingName) {
+    thingName
+    connected
+    lastConnectedAt
+    deviceType
+    deviceGroups
+    disconnectReason
+    attributes
+    firmwareType
+    firmwareVersion
+  }
+}
+
+query GetLatestDeviceStats {
+  getLatestDeviceStats {
+    status
+    recordTime
+    registeredDevices
+    connectedDevices
+    disconnectedDevices
+    brandNameDistribution
+    countryDistribution
+    productTypeDistribution
+    disconnectDistribution
+    groupDistribution
+    deviceTypeDistribution
+  }
+}
+
+query GetLatestFleetStats {
+  getLatestDeviceStats {
+    recordTime
+    disconnectDistribution
+    registeredDevices
+    connectedDevices
+    disconnectedDevices
+  }
+}
+
+query GetLatestVersionStats {
+  getLatestDeviceStats {
+    recordTime
+    versionDistribution
+  }
+}
+
+query GetThingShadow($thingName: String!, $shadowName: String) {
+  getThingShadow(thingName: $thingName, shadowName: $shadowName)
+}
+
+query GetRetainedTopic($thingName: String!, $topicName: RetainedTopicSuffix!) {
+  getRetainedTopic(thingName: $thingName, topicName: $topicName) {
+    topic
+    payload
+    timestamp
+  }
+}
+
+query GetThingCount($filter: FilterResolverInput) {
+  getThingCount(filter: $filter)
+}
+
+query GetCloudwatchMetricData(
+  $type: CloudwatchMetricType!
+  $period: Int
+  $start: AWSDateTime
+) {
+  getCloudwatchMetricData(type: $type, period: $period, start: $start) {
+    metric
+    timestamp
+    value
+  }
+}
+
+query GetDefenderMetricData(
+  $thingName: String!
+  $type: DefenderMetricType!
+  $startTime: AWSDateTime
+  $endTime: AWSDateTime
+) {
+  getDefenderMetricData(
+    thingName: $thingName
+    type: $type
+    startTime: $startTime
+    endTime: $endTime
+  ) {
+    metric
+    timestamp
+    value
+  }
+}
+
+query GetPersistedUserPreferences {
+  getPersistedUserPreferences {
+    deviceList {
+      favoriteDevices
+      contentDisplay {
+        id
+        visible
+        width
+      }
+      visibleContent
+      pageSize
+      wrapLines
+      stripedRows
+      contentDensity
+      stickyColumns {
+        first
+        last
+      }
+      filterObjects {
+        name
+        filters {
+          fieldName
+          operator
+          value
+        }
+        operation
+      }
+    }
+    jobList {
+      contentDisplay {
+        id
+        visible
+        width
+      }
+      visibleContent
+      pageSize
+      wrapLines
+      stripedRows
+      contentDensity
+      stickyColumns {
+        first
+        last
+      }
+    }
+  }
+}
+
+query ListThingGroups {
+  listThingGroups {
+    groups {
+      groupName
+      groupType
+      childGroups {
+        groupName
+        groupType
+        childGroups {
+          groupName
+          groupType
+          childGroups {
+            groupName
+            groupType
+            childGroups {
+              groupName
+              groupType
+            }
+          }
+        }
+      }
+    }
+  }
+}

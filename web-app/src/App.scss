@@ -1,0 +1,81 @@
+body {
+  font-family: 'Amazon Ember', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+code {
+  font-family: 'Amazon Ember Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+#header-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1002;
+  background-color: white;
+  height: auto; /* Reduce the height of the header */
+}
+
+#supergraphic {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Ensure the top navigation has minimal space */
+[data-testid="top-navigation"] {
+  padding: 5px 20px !important;
+  background-color: white !important;
+}
+
+/* Remove any black strips that might be appearing */
+[data-testid="top-navigation"] + div {
+  background-color: white !important;
+}
+
+/* Ensure the navigation container has enough space */
+[data-testid="top-navigation-identity"] {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Fix for any black strips between elements */
+#header-wrapper + div {
+  background-color: white !important;
+}
+
+/* Footer styling */
+.app-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  margin-top: 40px;
+  border-top: 1px solid #eaeded;
+}
+
+.footer-logo {
+  height: 40px;
+  width: auto;
+}
+
+/* Make sure the content area takes up all available space */
+[data-testid="app-layout-content"] {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px); /* Subtract header height */
+}
+
+/* Push the footer to the bottom */
+[data-testid="app-layout-content"] > div {
+  flex: 1;
+}

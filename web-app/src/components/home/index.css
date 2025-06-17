@@ -1,0 +1,32 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #fff;
+}
+
+.logo-section {
+  margin-bottom: 2rem;
+}
+
+.pace-logo {
+  max-width: 800px; /* Increased from 400px to 800px */
+  height: auto;
+}
+
+.title-section h1 {
+  font-size: 3rem;
+  color: #232f3e; /* AWS blue color instead of red */
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+}
+
+/* Custom styling for the logo in the header */
+.aws-logo-custom {
+  max-height: 160px; /* Increased from 80px to 160px */
+  width: auto;
+}

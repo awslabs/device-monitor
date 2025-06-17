@@ -1,0 +1,47 @@
+{
+  "name": "@bfw/shared",
+  "version": "1.0.0",
+  "description": "Shared software components for Fleet Watch to use",
+  "private": true,
+  "main": "src/index.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "",
+    "directory": "shared"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-lambda-powertools/commons": "^2.14.0",
+    "@aws-lambda-powertools/logger": "^2.14.0",
+    "@aws-lambda-powertools/metrics": "^2.14.0",
+    "@aws-lambda-powertools/tracer": "^2.14.0",
+    "@aws-sdk/client-cloudfront": "^3.750.0",
+    "@aws-sdk/client-cloudwatch": "^3.750.0",
+    "@aws-sdk/client-dynamodb": "^3.750.0",
+    "@aws-sdk/client-iot": "^3.750.0",
+    "@aws-sdk/client-iot-data-plane": "^3.750.0",
+    "@aws-sdk/client-ssm": "^3.750.0",
+    "@aws-sdk/lib-dynamodb": "^3.750.0",
+    "@aws-sdk/util-dynamodb": "^3.750.0",
+    "aws-lambda": "^1.0.7",
+    "axios": "^1.7.9",
+    "retry-as-promised": "^7.0.4"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@swc/core": "^1.10.17",
+    "@swc/jest": "^0.2.37",
+    "@types/aws-lambda": "^8.10.147",
+    "@types/node": "^22.13.4",
+    "aws-sdk-client-mock": "^4.1.0",
+    "aws-sdk-client-mock-jest": "^4.1.0",
+    "esbuild": "^0.25.0",
+    "jest": "^29.7.0"
+  }
+}

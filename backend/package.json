@@ -1,0 +1,26 @@
+{
+  "name": "backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "",
+    "directory": "backend"
+  },
+  "scripts": {
+    "cdk": "cdk",
+    "build": "cdk synth",
+    "type-check": "tsc --noEmit",
+    "bootstrap": "cdk bootstrap --cloudformation-execution-policies 'arn:aws:iam::aws:policy/PowerUserAccess,arn:aws:iam::aws:policy/IAMFullAccess'"
+  },
+  "devDependencies": {
+    "@types/git-branch": "^2.0.5",
+    "@types/node": "22.13.4",
+    "aws-cdk": "^2.198.0",
+    "cdk-nag": "^2.35.23",
+    "constructs": "^10.4.2",
+    "git-branch": "^2.0.1",
+    "tsx": "^4.19.2"
+  }
+}

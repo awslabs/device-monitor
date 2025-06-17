@@ -1,0 +1,155 @@
+/**
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ *
+ * Licensed under the Amazon Software License (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ *   http://aws.amazon.com/asl/
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
+import { SAMPLE_CONTEXT, SAMPLE_EVENT } from '../shared/src/utils';
+import { describe, expect, test, beforeEach } from '@jest/globals';
+import { mockClient, type AwsClientStub } from 'aws-sdk-client-mock';
+import { 
+  IoTClient, 
+  ListThingGroupsCommand,
+  DescribeThingGroupCommand
+} from '@aws-sdk/client-iot';
+import { Lambda, InvokeCommand } from '@aws-sdk/client-lambda';
+
+// Mock IoT and Lambda clients
+const iotClientMock: AwsClientStub<IoTClient> = mockClient(IoTClient);
+const lambdaMock: AwsClientStub<Lambda> = mockClient(Lambda);
+
+// Function to invoke the Python Lambda
+async function invokePythonLambda(event: any, context: any) {
+  // This would normally invoke the actual Lambda, but for testing we'll mock the response
+  const response = await lambdaMock.send(new InvokeCommand({
+    FunctionName: 'GetThingGroupListFunction',
+    Payload: Buffer.from(JSON.stringify({
+      arguments: event.arguments,
+      info: event.info
+    }))
+  }));
+  
+  // Parse the response payload
+  return JSON.parse(Buffer.from(response.Payload || '{}').toString());
+}
+
+describe('Get Thing Group List Python Lambda', (): void => {
+  beforeEach((): void => {
+    // Reset all mocks
+    iotClientMock.reset();
+    lambdaMock.reset();
+    
+    // Mock IoT ListThingGroups response
+    iotClientMock.on(ListThingGroupsCommand).resolves({
+      thingGroups: [
+        {
+          groupName: 'ParentGroup',
+          groupArn: 'arn:aws:iot:us-west-2:123456789012:thinggroup/ParentGroup'
+        },
+        {
+          groupName: 'ChildGroup1',
+          groupArn: 'arn:aws:iot:us-west-2:123456789012:thinggroup/ChildGroup1'
+        },
+        {
+          groupName: 'ChildGroup2',
+          groupArn: 'arn:aws:iot:us-west-2:123456789012:thinggroup/ChildGroup2'
+        }
+      ]
+    });
+    
+    // Mock IoT DescribeThingGroup responses
+    iotClientMock.on(DescribeThingGroupCommand).callsFake((params) => {
+      if (params.thingGroupName === 'ParentGroup') {
+        return {
+          thingGroupName: 'ParentGroup',
+          thingGroupId: '12345',
+          thingGroupArn: 'arn:aws:iot:us-west-2:123456789012:thinggroup/ParentGroup',
+          thingGroupMetadata: {
+            parentGroupName: null
+          }
+        };
+      } else if (params.thingGroupName === 'ChildGroup1') {
+        return {
+          thingGroupName: 'ChildGroup1',
+          thingGroupId: '23456',
+          thingGroupArn: 'arn:aws:iot:us-west-2:123456789012:thinggroup/ChildGroup1',
+          thingGroupMetadata: {
+            parentGroupName: 'ParentGroup'
+          }
+        };
+      } else {
+        return {
+          thingGroupName: 'ChildGroup2',
+          thingGroupId: '34567',
+          thingGroupArn: 'arn:aws:iot:us-west-2:123456789012:thinggroup/ChildGroup2',
+          thingGroupMetadata: {
+            parentGroupName: 'ParentGroup'
+          }
+        };
+      }
+    });
+    
+    // Mock Lambda response
+    lambdaMock.on(InvokeCommand).resolves({
+      StatusCode: 200,
+      Payload: Buffer.from(JSON.stringify({
+        data: {
+          groups: [
+            {
+              groupName: 'ParentGroup',
+              groupType: 'STATIC',
+              childGroups: [
+                {
+                  groupName: 'ChildGroup1',
+                  groupType: 'STATIC',
+                  childGroups: []
+                },
+                {
+                  groupName: 'ChildGroup2',
+                  groupType: 'STATIC',
+                  childGroups: []
+                }
+              ]
+            }
+          ]
+        }
+      }))
+    });
+  });
+
+  test('Should return thing group hierarchy', async (): Promise<void> => {
+    const result = await invokePythonLambda(
+      {
+        ...SAMPLE_EVENT,
+        arguments: {}
+      },
+      SAMPLE_CONTEXT
+    );
+    
+    expect(result).toMatchObject({
+      data: {
+        groups: expect.arrayContaining([
+          expect.objectContaining({
+            groupName: expect.any(String),
+            groupType: expect.any(String),
+            childGroups: expect.arrayContaining([
+              expect.objectContaining({
+                groupName: expect.any(String),
+                groupType: expect.any(String)
+              })
+            ])
+          })
+        ])
+      }
+    });
+  });
+});

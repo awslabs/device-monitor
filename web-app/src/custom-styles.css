@@ -1,0 +1,76 @@
+/* Custom styles for FleetWatch application */
+
+/* Side navigation container to allow for logo positioning */
+.side-navigation-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+/* Logo container at the bottom of side menu */
+.side-menu-logo-container {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.side-menu-logo {
+  width: 80%;
+  max-width: 180px;
+  height: auto;
+}
+
+/* Make pie charts larger */
+[data-testid="pie-chart"] {
+  min-height: 300px !important;
+}
+
+/* Ensure the content area has proper spacing */
+[data-testid="app-layout-content"] {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px);
+}
+
+/* Remove any extra padding in the header */
+#header-wrapper {
+  padding: 0 !important;
+  min-height: auto !important;
+}
+
+/* Ensure the top navigation has minimal height */
+[data-testid="top-navigation"] {
+  min-height: auto !important;
+  height: auto !important;
+}
+
+/* Remove any extra space in the logo area */
+[data-testid="top-navigation-identity"] {
+  padding: 0 !important;
+}
+
+/* Ensure charts have proper spacing */
+.awsui-pie-chart-container {
+  margin: 0 auto;
+  width: 100% !important;
+  max-width: 600px !important;
+}
+
+/* Ensure chart segments are visible */
+.awsui-pie-chart-segment {
+  transform: scale(1.5);
+}
+
+/* Make sure the side navigation has enough space for the logo */
+[data-testid="side-navigation"] {
+  padding-bottom: 100px !important;
+}
+/* Add padding to the bottom of the CloudwatchChart container */
+[data-testid="container"] > div > [data-testid="line-chart"] {
+  padding-bottom: 20px !important;
+}

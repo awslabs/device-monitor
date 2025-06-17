@@ -1,0 +1,49 @@
+/* Login background styles */
+
+/* Target the modal overlay to make it fully transparent */
+.amplify-modal__overlay {
+  background-color: transparent !important;
+}
+
+/* Make the modal background transparent */
+.amplify-modal {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Style the card to have significant transparency */
+.amplify-card {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Target the authenticator container */
+.amplify-authenticator {
+  background-color: transparent !important;
+}
+
+/* Override any background colors that might be applied */
+.amplify-authenticator-container {
+  background-color: transparent !important;
+}
+
+/* Ensure the form fields remain readable */
+.amplify-input {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Add a semi-transparent overlay to the entire page when authenticator is active */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./assets/FleetWatch.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}

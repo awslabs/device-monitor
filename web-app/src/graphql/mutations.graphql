@@ -1,0 +1,46 @@
+mutation putPersistedUserPreferences($input: PersistedUserPreferencesInput!) {
+  putPersistedUserPreferences(input: $input) {
+    deviceList {
+      favoriteDevices
+      contentDisplay {
+        id
+        visible
+        width
+      }
+      visibleContent
+      pageSize
+      wrapLines
+      stripedRows
+      contentDensity
+      stickyColumns {
+        first
+        last
+      }
+      filterObjects {
+        name
+        filters {
+          fieldName
+          operator
+          value
+        }
+        operation
+      }
+    }
+    jobList {
+      contentDisplay {
+        id
+        visible
+        width
+      }
+      visibleContent
+      pageSize
+      wrapLines
+      stripedRows
+      contentDensity
+      stickyColumns {
+        first
+        last
+      }
+    }
+  }
+}

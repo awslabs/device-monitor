@@ -1,0 +1,75 @@
+{
+  "name": "FleetWatch",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": {
+    "node": "22"
+  },
+  "workspaces": [
+    "backend",
+    "shared",
+    "web-app"
+  ],
+  "scripts": {
+    "start": "npm run start --workspace web-app",
+    "prebuild": "npm run codegen && npm run type-check && npm run lint",
+    "build": "npm run build --workspace backend",
+    "codegen": "graphql-codegen-esm --config 'graphql.config.ts'",
+    "type-check": "npm run type-check --workspaces",
+    "lint": "eslint . --report-unused-disable-directives --report-unused-inline-configs warn --max-warnings 0",
+    "format": "prettier . --write",
+    "test": "jest",
+    "predeploy": "npm run codegen",
+    "generate-env": "node scripts/generate-env.js",
+    "deploy": "rm -f web-app/.env && npm run cdk deploy --workspace backend -- -c stack_name=\"${STACK_NAME:-}\" --all --require-approval never --outputs-file cdk-outputs.json",
+    "postdeploy": "npm run generate-env",
+    "destroy": "npm run cdk destroy --workspace backend -- -c stack_name=\"${STACK_NAME:-}\" --all --force",
+    "upgrade": "npx --yes npm-check-updates --deep -u -x react -x @types/react -x react-dom -x @types/react-dom && find . -not -path '**/node_modules/**' '(' -type d -name 'node_modules' -o -type d -name 'dist' -o -type d -name 'cdk.out' -o -type f -name 'package-lock.json' ')' -prune -exec rm -rf '{}' + && npm i"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-class-properties": "^7.27.1",
+    "@babel/plugin-transform-object-rest-spread": "^7.27.2",
+    "@eslint/js": "^9.27.0",
+    "@graphql-codegen/cli": "^5.0.6",
+    "@graphql-codegen/typed-document-node": "^5.1.1",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-operations": "^4.6.1",
+    "@jest/globals": "^29.7.0",
+    "@swc/core": "^1.11.29",
+    "@swc/jest": "^0.2.38",
+    "@typescript-eslint/parser": "^8.32.1",
+    "amplify-codegen": "^4.10.3",
+    "aws-sdk-client-mock": "^4.1.0",
+    "aws-sdk-client-mock-jest": "^4.1.0",
+    "core-js": "^3.42.0",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "glob": "^11.0.2",
+    "globals": "^16.1.0",
+    "graphql-config": "^5.1.5",
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1"
+  },
+  "overrides": {
+    "graphql": "16.10.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-iot": "^3.825.0",
+    "@aws-sdk/client-lambda": "^3.825.0",
+    "aws-cdk-lib": "^2.198.0",
+    "constructs": "^10.4.2"
+  }
+}

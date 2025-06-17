@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1300 550.951" style="enable-background:new 0 0 1300 550.951;" xml:space="preserve">
+  <style type="text/css">
+    .yellow {fill:#F1BE48;}
+    .red {fill:#A00027;}
+  </style>
+  <g>
+    <!-- 10 vertical stripes alternating between yellow and red -->
+    <rect class="yellow" x="0" y="0" width="130" height="550.951"/>
+    <rect class="red" x="130" y="0" width="130" height="550.951"/>
+    <rect class="yellow" x="260" y="0" width="130" height="550.951"/>
+    <rect class="red" x="390" y="0" width="130" height="550.951"/>
+    <rect class="yellow" x="520" y="0" width="130" height="550.951"/>
+    <rect class="red" x="650" y="0" width="130" height="550.951"/>
+    <rect class="yellow" x="780" y="0" width="130" height="550.951"/>
+    <rect class="red" x="910" y="0" width="130" height="550.951"/>
+    <rect class="yellow" x="1040" y="0" width="130" height="550.951"/>
+    <rect class="red" x="1170" y="0" width="130" height="550.951"/>
+  </g>
+</svg>

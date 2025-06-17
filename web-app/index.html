@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="language" content="en" />
+    <title>FleetWatch</title>
+    <meta name="apple-mobile-web-app-title" content="FleetWatch" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="copyright" content="© AWS PACE team" />
+    <meta name="distribution" content="iu" />
+    <base href="/" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main"></script>
+    <script>
+      window.global = window;
+      window.process = {
+        env: { DEBUG: undefined }
+      };
+      var exports = {};
+    </script>
+  </body>
+</html>

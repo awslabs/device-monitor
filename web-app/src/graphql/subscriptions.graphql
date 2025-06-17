@@ -1,0 +1,17 @@
+# This file uses GraphQL syntax. To generate TypeScript types from this file, run `npm run codegen` in the root directory.
+
+subscription OnNewDeviceStats {
+  onNewDeviceStats {
+    status
+    recordTime
+    registeredDevices
+    connectedDevices
+    disconnectedDevices
+    brandNameDistribution
+    countryDistribution
+    productTypeDistribution
+    disconnectDistribution
+    groupDistribution
+    deviceTypeDistribution
+  }
+}

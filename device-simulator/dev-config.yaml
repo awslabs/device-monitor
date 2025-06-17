@@ -1,0 +1,363 @@
+# AWS IoT Core Configuration
+aws:
+  endpoint: "a3o0cryk7wgci0-ats.iot.us-west-2.amazonaws.com"
+  region: "us-west-2"
+
+# Device Simulation Configuration
+simulation:
+  # Number of devices to simulate
+  device_count: 25
+  # Probability of random disconnection (0.0 to 1.0)
+  disconnect_probability: 0.4
+  # Min and max time between updates (seconds)
+  update_interval:
+    min: 10
+    max: 30
+  # Min and max time for reconnection after disconnect (seconds)
+  reconnect_interval:
+    min: 5
+    max: 15
+  # Device categories to simulate (can be "all" or a list of categories)
+  device_categories: "all" # Alternative: ["sensor", "actuator", "gateway"]
+
+# Device Configuration
+device:
+  # Thing Groups to create
+  thing_groups:
+    - name: "SensorGroup"
+      description: "Group for all sensor devices"
+    - name: "ActuatorGroup"
+      description: "Group for all actuator devices"
+    - name: "GatewayGroup"
+      description: "Group for all gateway devices"
+    - name: "BuildingADevices"
+      description: "All devices in Building A"
+    - name: "BuildingBDevices"
+      description: "All devices in Building B"
+
+  # Thing Types to create
+  thing_types:
+    - name: "TemperatureSensor"
+      description: "Temperature sensor device type"
+      searchable_attributes: ["category", "brandName", "country"]
+    - name: "HumiditySensor"
+      description: "Humidity sensor device type"
+      searchable_attributes: ["category", "brandName", "country"]
+    - name: "SmartSwitch"
+      description: "Smart switch device type"
+      searchable_attributes: ["category", "brandName", "country"]
+    - name: "Gateway"
+      description: "Gateway device type"
+      searchable_attributes: ["location", "zone", "category", "brandName", "country", "provisioningTimestamp", "productionTimestamp", "hasApplianceFW"]
+
+  # Device Identification
+  identification:
+    # Primary identifier to use for the device in the IoT registry
+    # Options: "device_id", "serial_number", "uuid"
+    primary_identifier: "device_id"
+
+    # Device ID configuration
+    device_id:
+      # Prefix for device IDs
+      prefix: "iot_"
+      # Number of random digits to append
+      random_digits: 6
+
+    # Serial number configuration
+    serial_number:
+      # Prefix for serial numbers
+      prefix: "SN"
+      # Number of random digits to append
+      random_digits: 10
+
+    # UUID configuration
+    uuid:
+      # Whether to use UUID v4 or v5
+      version: 4
+
+  # Paths for certificates
+  certs_base_path: "./certs"
+  root_ca_path: "./rootCA"
+
+  # Possible hardware versions (randomly selected for each device)
+  hardware_versions:
+    - "HW-v1.0"
+    - "HW-v1.5"
+    - "HW-v2.0"
+    - "HW-v2.1"
+    - "HW-v3.0"
+
+  # Possible firmware versions (randomly selected for each device)
+  firmware_versions:
+    - "0.9.5"
+    - "1.0.0"
+    - "1.1.2"
+    - "1.2.0"
+    - "2.0.0-beta"
+
+  # Possible network types (randomly selected for each device)
+  network_types:
+    - "wifi"
+    - "ethernet"
+    - "cellular"
+    - "zigbee"
+    - "bluetooth"
+
+  # Possible device types by category - aligned with FleetWatch
+  device_types:
+    sensor:
+      - "temperature_sensor"
+      - "humidity_sensor"
+      - "motion_sensor"
+      - "pressure_sensor"
+      - "light_sensor"
+    actuator:
+      - "smart_switch"
+      - "smart_valve"
+      - "motor_controller"
+      - "relay_controller"
+      - "led_controller"
+    gateway:
+      - "home_gateway"
+      - "industrial_gateway"
+      - "edge_controller"
+      - "protocol_bridge"
+
+  # Location information (for simulating distributed devices)
+  locations:
+    - name: "Building A"
+      zones: ["Floor 1", "Floor 2", "Floor 3"]
+    - name: "Building B"
+      zones: ["Production", "Warehouse", "Office"]
+    - name: "Remote Site"
+      zones: ["Outdoor", "Indoor"]
+
+  # Brand information 
+  brands:
+    - name: "thermex"
+      display_name: "Thermex"
+    - name: "climatron"
+      display_name: "Climatron"
+    - name: "aerotech"
+      display_name: "AeroTech"
+    - name: "ecovision"
+      display_name: "EcoVision"
+    - name: "smartclime"
+      display_name: "SmartClime"
+    - name: "ventrix"
+      display_name: "Ventrix"
+    - name: "heatwave"
+      display_name: "HeatWave"
+    - name: "aircore"
+      display_name: "AirCore"
+
+  # Country information (for device attributes)
+  countries:
+    - code: "US"
+      name: "United States"
+    - code: "DE"
+      name: "Germany"
+    - code: "IT"
+      name: "Italy"
+    - code: "ES"
+      name: "Spain"
+    - code: "JP"
+      name: "Japan"
+    - code: "CN"
+      name: "China"
+    - code: "IN"
+      name: "India"
+    - code: "CA"
+      name: "Canada"
+    - code: "AU"
+      name: "Australia"
+    - code: "NL"
+      name: "Netherlands"
+    - code: "SE"
+      name: "Sweden"
+    - code: "KR"
+      name: "South Korea"
+
+# Retained Message Configuration - aligned with FleetWatch
+retained_messages:
+  # Base topic patterns for retained messages
+  topic_patterns:
+    - prefix: "device/+/state"
+      description: "Device state information"
+    - prefix: "things/+/topics/info"
+      description: "Device information"
+    - prefix: "things/+/topics/meta"
+      description: "Thing metadata"
+    - prefix: "things/+/topics/sensor"
+      description: "Sensor readings"
+
+# Device Shadow Configuration by Device Type
+shadow:
+  # Common attributes for all device types
+  common:
+    connected: true
+    lastReportTime: 0 # Will be set to current time
+    batteryLevel: 100
+    signalStrength: 80
+    firmwareUpdateAvailable: false
+    maintenanceRequired: false
+
+  # Sensor-specific attributes
+  sensor:
+    defaults:
+      sensorType: "generic"
+      measurementUnit: "unit"
+      sampleRate: 60
+      alertThreshold: 0
+      alertEnabled: false
+      currentValue: 0
+      provisioningTimestamp: 0 # Will be set dynamically
+      productionTimestamp: 0 # Will be set dynamically
+      brandName: "" # Will be set dynamically
+      country: "" # Will be set dynamically
+      hasApplianceFW: false
+
+    ranges:
+      temperature:
+        min: -20.0
+        max: 50.0
+        unit: "celsius"
+      humidity:
+        min: 0.0
+        max: 100.0
+        unit: "percent"
+      pressure:
+        min: 900.0
+        max: 1100.0
+        unit: "hPa"
+      light:
+        min: 0.0
+        max: 10000.0
+        unit: "lux"
+      motion:
+        min: 0
+        max: 1
+        unit: "boolean"
+
+  # Actuator-specific attributes
+  actuator:
+    defaults:
+      actuatorType: "generic"
+      state: "off"
+      mode: "auto"
+      powerLevel: 0
+      operatingHours: 0
+      provisioningTimestamp: 0 # Will be set dynamically
+      productionTimestamp: 0 # Will be set dynamically
+      brandName: "" # Will be set dynamically
+      country: "" # Will be set dynamically
+      hasApplianceFW: false
+
+    options:
+      state:
+        - "off"
+        - "on"
+        - "standby"
+        - "error"
+      mode:
+        - "auto"
+        - "manual"
+        - "scheduled"
+        - "eco"
+        - "boost"
+
+    ranges:
+      powerLevel:
+        min: 0
+        max: 100
+        unit: "percent"
+
+  # Gateway-specific attributes
+  gateway:
+    defaults:
+      connectedDevices: 0
+      dataTransferred: 0
+      cpuUsage: 0
+      memoryUsage: 0
+      storageUsage: 0
+      uptime: 0
+      provisioningTimestamp: 0 # Will be set dynamically
+      productionTimestamp: 0 # Will be set dynamically
+      brandName: "" # Will be set dynamically
+      country: "" # Will be set dynamically
+      hasApplianceFW: false
+
+    ranges:
+      connectedDevices:
+        min: 0
+        max: 50
+      cpuUsage:
+        min: 0
+        max: 100
+        unit: "percent"
+      memoryUsage:
+        min: 0
+        max: 100
+        unit: "percent"
+      storageUsage:
+        min: 0
+        max: 100
+        unit: "percent"
+
+# Schedule Shadow Configuration - for schedule shadow
+schedule_shadow:
+  types:
+    - "local"
+    - "remote"
+  modes:
+    - "daily"
+    - "weekly"
+  default_schedule:
+    name: "Default Schedule"
+    mode: "daily"
+    days:
+      - day: "monday"
+        switchPoints:
+          - time: 28800  # 8:00 AM in seconds
+            temperature: 21
+            mode: "auto"
+          - time: 64800  # 6:00 PM in seconds
+            temperature: 19
+            mode: "eco"
+      - day: "tuesday"
+        switchPoints:
+          - time: 28800  # 8:00 AM in seconds
+            temperature: 21
+            mode: "auto"
+          - time: 64800  # 6:00 PM in seconds
+            temperature: 19
+            mode: "eco"
+# Package Shadow Configuration
+package_shadow:
+  # Firmware types for package shadow
+  firmware_types:
+    - "bootloader"
+    - "application"
+    - "modem"
+    - "radio"
+
+# Schedule Shadow Configuration
+schedule_shadow:
+  # Default schedule for devices
+  default_schedule:
+    weekdays:
+      - day: "monday"
+        active_hours: ["9:00-17:00", "19:00-21:00"]
+      - day: "tuesday"
+        active_hours: ["9:00-17:00", "19:00-21:00"]
+      - day: "wednesday"
+        active_hours: ["9:00-17:00", "19:00-21:00"]
+      - day: "thursday"
+        active_hours: ["9:00-17:00", "19:00-21:00"]
+      - day: "friday"
+        active_hours: ["9:00-17:00", "19:00-21:00"]
+    weekend:
+      - day: "saturday"
+        active_hours: ["10:00-14:00"]
+      - day: "sunday"
+        active_hours: ["10:00-14:00"]

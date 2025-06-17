@@ -1,0 +1,367 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the "Software"), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+# SPDX-License-Identifier: MIT-0
+
+# This file uses GraphQL syntax. To generate TypeScript types from this file, run `npm run codegen` in the root directory.
+
+enum CloudwatchMetricType {
+  CONNECTED_DEVICES
+  DISCONNECT_RATE
+}
+
+enum DefenderMetricType {
+  AUTHORIZATION_FAILURES
+  CONNECTION_ATTEMPTS
+  DISCONNECT_DURATION
+  DISCONNECTS
+}
+
+enum RetainedTopicSuffix {
+  info
+  meta
+  sensor
+}
+
+input FilterResolverInput {
+  operation: FilterOperation!
+  filters: [FilterInput!]
+  favoriteDevices: [String!]
+}
+
+input FilterPreferenceInput {
+  name: String!
+  operation: FilterOperation!
+  filters: [FilterInput!]
+}
+
+input FilterInput {
+  fieldName: String!
+  operator: FilterOperator!
+  value: String!
+}
+
+type FilterPreference {
+  name: String!
+  operation: FilterOperation!
+  filters: [Filter!]
+}
+
+type Filter {
+  fieldName: String!
+  operator: FilterOperator!
+  value: String!
+}
+
+enum FilterOperation {
+  and
+  or
+}
+
+enum FilterOperator {
+  none
+  eq
+  ne
+  le
+  lt
+  ge
+  gt
+  between
+  contains
+}
+
+type RetainedTopic @aws_iam @aws_cognito_user_pools {
+  topic: String!
+  payload: AWSJSON!
+  timestamp: AWSTimestamp!
+}
+
+type PaginatedThings @aws_iam @aws_cognito_user_pools {
+  items: [ThingSummary!]
+  nextToken: String
+}
+
+type PaginatedJobs @aws_iam @aws_cognito_user_pools {
+  items: [JobSummary!]
+  nextToken: String
+}
+
+type JobSummary @aws_iam @aws_cognito_user_pools {
+  jobArn: String!
+  jobId: String!
+  targetSelection: String!
+  status: String!
+  createdAt: AWSDateTime!
+  lastUpdatedAt: AWSDateTime!
+  completedAt: AWSDateTime
+  isConcurrent: Boolean!
+}
+
+type PaginatedJobExecutions @aws_iam @aws_cognito_user_pools {
+  items: [JobExecution!]
+  nextToken: String
+}
+
+type JobExecution @aws_iam @aws_cognito_user_pools {
+  jobId: String!
+  thingName: String!
+  executionNumber: Int!
+  lastUpdatedAt: AWSDateTime!
+  queuedAt: AWSDateTime!
+  retryAttempt: Int!
+  startedAt: AWSDateTime
+  status: String!
+}
+
+type JobDetails @aws_iam @aws_cognito_user_pools {
+  targetSelection: String!
+  status: String!
+  targets: [String!]!
+  description: String
+  maximumRatePerMinute: Float
+  baseRatePerMinute: Float
+  abortThresholdPercentage: Float
+  createdAt: AWSDateTime!
+  lastUpdatedAt: AWSDateTime!
+  completedAt: AWSDateTime
+  stats: JobProcessStats!
+  inProgressTimeoutInMinutes: Int
+  numberOfRetries: Int
+  isConcurrent: Boolean
+}
+
+type JobProcessStats @aws_iam @aws_cognito_user_pools {
+  canceled: Int!
+  succeeded: Int!
+  failed: Int!
+  rejected: Int!
+  queued: Int!
+  inProgress: Int!
+  removed: Int!
+  timedOut: Int!
+}
+
+type Device @aws_iam @aws_cognito_user_pools {
+  thingName: String!
+  connected: Boolean!
+  lastConnectedAt: AWSTimestamp
+  deviceType: String!
+  deviceGroups: [String!]!
+  disconnectReason: String
+  attributes: AWSJSON!
+  firmwareType: String
+  firmwareVersion: String
+}
+
+type ThingSummary @aws_iam @aws_cognito_user_pools {
+  thingName: String!
+  connected: Boolean!
+  lastConnectedAt: AWSTimestamp
+  deviceType: String!
+  disconnectReason: String
+  provisioningTimestamp: AWSTimestamp!
+  productionTimestamp: AWSTimestamp!
+  brandName: String!
+  country: String!
+  hasApplianceFW: Boolean!
+  firmwareType: String
+  firmwareVersion: String
+  thingGroupNames: [String!]!
+}
+
+type DeviceStats @aws_iam @aws_cognito_user_pools {
+  status: String!
+  recordTime: String!
+  registeredDevices: Int!
+  connectedDevices: Int!
+  disconnectedDevices: Int!
+  brandNameDistribution: AWSJSON
+  countryDistribution: AWSJSON!
+  productTypeDistribution: AWSJSON!
+  disconnectDistribution: AWSJSON!
+  groupDistribution: AWSJSON!
+  deviceTypeDistribution: AWSJSON!
+  versionDistribution: AWSJSON!
+  ttl: AWSTimestamp
+}
+
+type MetricData @aws_iam @aws_cognito_user_pools {
+  metric: String!
+  timestamp: AWSDateTime!
+  value: Float!
+}
+
+type ContentDisplay @aws_iam @aws_cognito_user_pools {
+  id: String
+  visible: Boolean
+  width: Float
+}
+
+type StickyColumns {
+  first: Int
+  last: Int
+}
+
+type DeviceListPreferences @aws_iam @aws_cognito_user_pools {
+  pageSize: Int
+  contentDisplay: [ContentDisplay!]
+  visibleContent: [String!]
+  favoriteDevices: [String!]
+  wrapLines: Boolean
+  stripedRows: Boolean
+  contentDensity: String
+  stickyColumns: StickyColumns
+  filterObjects: [FilterPreference!]
+}
+
+type JobListPreferences @aws_iam @aws_cognito_user_pools {
+  pageSize: Int
+  contentDisplay: [ContentDisplay!]
+  visibleContent: [String!]
+  wrapLines: Boolean
+  stripedRows: Boolean
+  contentDensity: String
+  stickyColumns: StickyColumns
+}
+
+type PersistedUserPreferences @aws_iam @aws_cognito_user_pools {
+  deviceList: DeviceListPreferences!
+  jobList: JobListPreferences!
+}
+
+input DeviceStatsInput {
+  status: String!
+  recordTime: String!
+  registeredDevices: Int!
+  connectedDevices: Int!
+  disconnectedDevices: Int!
+  brandNameDistribution: AWSJSON!
+  countryDistribution: AWSJSON!
+  productTypeDistribution: AWSJSON!
+  disconnectDistribution: AWSJSON!
+  groupDistribution: AWSJSON!
+  deviceTypeDistribution: AWSJSON!
+  versionDistribution: AWSJSON!
+  ttl: AWSTimestamp
+}
+
+input ContentDisplayInput {
+  id: String
+  visible: Boolean
+  width: Float
+}
+
+input StickyColumnsInput {
+  first: Int
+  last: Int
+}
+
+input DeviceListPreferencesInput {
+  pageSize: Int
+  contentDisplay: [ContentDisplayInput!]
+  visibleContent: [String!]
+  favoriteDevices: [String!]
+  wrapLines: Boolean
+  stripedRows: Boolean
+  contentDensity: String
+  stickyColumns: StickyColumnsInput
+  columnWidths: [Float!]
+  filterObjects: [FilterPreferenceInput!]
+}
+
+input JobListPreferencesInput {
+  pageSize: Int
+  contentDisplay: [ContentDisplayInput!]
+  visibleContent: [String!]
+  wrapLines: Boolean
+  stripedRows: Boolean
+  contentDensity: String
+  stickyColumns: StickyColumnsInput
+  columnWidths: [Float!]
+}
+
+input PersistedUserPreferencesInput {
+  deviceList: DeviceListPreferencesInput!
+  jobList: JobListPreferencesInput!
+}
+
+type ThingGroup @aws_iam @aws_cognito_user_pools {
+  groupName: String!
+  groupType: String!
+  childGroups: [ThingGroup!]!
+}
+
+type ThingGroupResponse @aws_iam @aws_cognito_user_pools {
+  groups: [ThingGroup!]!
+}
+
+type Query @aws_iam @aws_cognito_user_pools {
+  getDevice(thingName: String!): Device
+  listThings(
+    limit: Int
+    nextToken: String
+    filter: FilterResolverInput
+  ): PaginatedThings!
+  listJobs(limit: Int, nextToken: String): PaginatedJobs!
+  listJobExecutionsForJob(
+    jobId: String!
+    limit: Int
+    nextToken: String
+  ): PaginatedJobExecutions!
+  listJobExecutionsForThing(
+    thingName: String!
+    limit: Int
+    nextToken: String
+  ): PaginatedJobExecutions!
+  getJobDetails(jobId: String!): JobDetails
+  getLatestDeviceStats: DeviceStats
+  getLatestVersionStats: DeviceStats
+  getThingShadow(thingName: String!, shadowName: String): AWSJSON
+  getRetainedTopic(
+    thingName: String!
+    topicName: RetainedTopicSuffix!
+  ): RetainedTopic
+  getThingCount(filter: FilterResolverInput): Int!
+  getCloudwatchMetricData(
+    type: CloudwatchMetricType!
+    period: Int
+    start: AWSDateTime
+  ): [MetricData!]
+  getDefenderMetricData(
+    thingName: String!
+    type: DefenderMetricType!
+    startTime: AWSDateTime
+    endTime: AWSDateTime
+  ): [MetricData!]
+  getPersistedUserPreferences: PersistedUserPreferences
+  listThingGroups: ThingGroupResponse
+}
+
+type Subscription @aws_iam @aws_cognito_user_pools {
+  onNewDeviceStats: DeviceStats @aws_subscribe(mutations: ["createDeviceStats"])
+}
+
+type Mutation @aws_iam @aws_cognito_user_pools {
+  createDeviceStats(input: DeviceStatsInput!): DeviceStats! @aws_iam
+  putPersistedUserPreferences(
+    input: PersistedUserPreferencesInput!
+  ): PersistedUserPreferences!
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}

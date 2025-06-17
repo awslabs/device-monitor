@@ -1,0 +1,12 @@
+.pie-chart-wrapper {
+  text-align: center;
+}
+
+.pie-chart-wrapper .cloudscape-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.pie-chart-wrapper .cloudscape-container.small {
+  max-width: 300px;
+}
