@@ -70,7 +70,7 @@ export class JobsConstruct extends Construct {
         }
       }
     );
-    
+
     const listJobsDataSource: AppSync.LambdaDataSource =
       api.addLambdaDataSource('ListJobsDataSource', listJobsFunction);
     listJobsDataSource.createResolver('ListJobs', {
@@ -100,7 +100,7 @@ export class JobsConstruct extends Construct {
         resources: [`arn:aws:iot:${props.region}:${props.accountId}:job/*`]
       })
     );
-    
+
     // Create the Python Lambda function for get-job-details
     const getJobDetailsFunction: Lambda.Function = new Lambda.Function(
       this,
@@ -121,7 +121,7 @@ export class JobsConstruct extends Construct {
         }
       }
     );
-    
+
     const getJobDetailsDataSource: AppSync.LambdaDataSource =
       api.addLambdaDataSource('GetJobDetailsDataSource', getJobDetailsFunction);
     getJobDetailsDataSource.createResolver('GetJobDetails', {
@@ -154,7 +154,7 @@ export class JobsConstruct extends Construct {
         resources: ['*']
       })
     );
-    
+
     // Create the Python Lambda function for get-job-execution-list
     const listExecutionsFunction: Lambda.Function = new Lambda.Function(
       this,
@@ -175,7 +175,7 @@ export class JobsConstruct extends Construct {
         }
       }
     );
-    
+
     const listExecutionsDataSource: AppSync.LambdaDataSource =
       api.addLambdaDataSource('ListJobExecutions', listExecutionsFunction);
     listExecutionsDataSource.createResolver('ListJobExecutionsForJob', {

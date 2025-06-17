@@ -46,7 +46,7 @@ export default class ThingCountConstruct extends Construct {
         ]
       })
     );
-    
+
     // Create the Python Lambda function for get-thing-count
     const getThingCountFunction: Lambda.Function = new Lambda.Function(
       this,
@@ -67,7 +67,7 @@ export default class ThingCountConstruct extends Construct {
         }
       }
     );
-    
+
     // We're using a unique name for the data source to avoid conflicts
     const getThingCountDataSource: AppSync.LambdaDataSource =
       api.addLambdaDataSource('ThingCountDataSource', getThingCountFunction);

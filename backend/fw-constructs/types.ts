@@ -13,8 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import * as AppSync from 'aws-cdk-lib/aws-appsync';
-import * as Lambda from 'aws-cdk-lib/aws-lambda';
+import type * as AppSync from 'aws-cdk-lib/aws-appsync';
+import type * as Lambda from 'aws-cdk-lib/aws-lambda';
 import type Cognito from 'aws-cdk-lib/aws-cognito';
 
 export interface FWConstructProps {
@@ -25,7 +25,7 @@ export interface FWConstructProps {
   pythonLayer?: Lambda.LayerVersion;
 }
 
-export const defaultAppSyncResponseMapping = `
+export const defaultAppSyncResponseMapping: string = `
 #if (!$util.isNull($ctx.result.errors))
   #foreach($error in $ctx.result.errors)
     $util.appendError($error.message, $error.type)

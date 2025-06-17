@@ -24,7 +24,7 @@ export class ThingsDataConstruct extends Construct {
   constructor(scope: Construct, id: string, props: FWConstructProps) {
     super(scope, id);
     const api: AppSync.GraphqlApi = props.api;
-    
+
     // Create IAM role for Lambda execution
     const listThingsLambdaRole: IAM.Role = new IAM.Role(
       this,
@@ -38,7 +38,7 @@ export class ThingsDataConstruct extends Construct {
         ]
       }
     );
-    
+
     // Add necessary permissions
     listThingsLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
@@ -48,7 +48,7 @@ export class ThingsDataConstruct extends Construct {
         ]
       })
     );
-    
+
     // Create the Python Lambda function for list-things
     const listThingsFunction: Lambda.Function = new Lambda.Function(
       this,
@@ -71,11 +71,11 @@ export class ThingsDataConstruct extends Construct {
         }
       }
     );
-    
+
     // Create the AppSync data source using the Python Lambda
     const listThingsDataSource: AppSync.LambdaDataSource =
       api.addLambdaDataSource('ListThingsDataSource', listThingsFunction);
-    
+
     // Create the resolver for the listThings field
     listThingsDataSource.createResolver('ListThings', {
       typeName: 'Query',

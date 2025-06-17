@@ -17,23 +17,36 @@ import { SAMPLE_CONTEXT } from '../shared/src/utils';
 import { describe, expect, test, beforeEach } from '@jest/globals';
 import { mockClient, type AwsClientStub } from 'aws-sdk-client-mock';
 import { IoTClient, SearchIndexCommand } from '@aws-sdk/client-iot';
-import { CloudWatchClient, PutMetricDataCommand } from '@aws-sdk/client-cloudwatch';
+import {
+  CloudWatchClient,
+  PutMetricDataCommand
+} from '@aws-sdk/client-cloudwatch';
 import { Lambda, InvokeCommand } from '@aws-sdk/client-lambda';
 
 // Mock IoT, CloudWatch, and Lambda clients
 const iotClientMock: AwsClientStub<IoTClient> = mockClient(IoTClient);
-const cloudWatchClientMock: AwsClientStub<CloudWatchClient> = mockClient(CloudWatchClient);
+const cloudWatchClientMock: AwsClientStub<CloudWatchClient> =
+  mockClient(CloudWatchClient);
 const lambdaMock: AwsClientStub<Lambda> = mockClient(Lambda);
 
 // Function to invoke the Python Lambda
-async function invokePythonLambda(event: any, context: any) {
+
+async function invokePythonLambda(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _event: unknown,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _context: unknown
+): Promise<boolean> {
   // This would normally invoke the actual Lambda, but for testing we'll mock the response
-  const response = await lambdaMock.send(new InvokeCommand({
-    FunctionName: 'DeviceStatsMonitor',
-    Payload: Buffer.from(JSON.stringify({}))
-  }));
-  
+  const response: AWS.Response<Lambda, 'send'> = await lambdaMock.send(
+    new InvokeCommand({
+      FunctionName: 'DeviceStatsMonitor',
+      Payload: Buffer.from(JSON.stringify({}))
+    })
+  );
+
   // Parse the response payload
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   return response.StatusCode === 200;
 }
 
@@ -43,7 +56,7 @@ describe('Device Stats Monitor Python Lambda', (): void => {
     iotClientMock.reset();
     cloudWatchClientMock.reset();
     lambdaMock.reset();
-    
+
     // Mock IoT responses
     iotClientMock.on(SearchIndexCommand).resolves({
       things: [
@@ -82,10 +95,10 @@ describe('Device Stats Monitor Python Lambda', (): void => {
         }
       ]
     });
-    
+
     // Mock CloudWatch response
     cloudWatchClientMock.on(PutMetricDataCommand).resolves({});
-    
+
     // Mock Lambda response
     lambdaMock.on(InvokeCommand).resolves({
       StatusCode: 200,
@@ -94,7 +107,7 @@ describe('Device Stats Monitor Python Lambda', (): void => {
   });
 
   test('Should execute successfully', async (): Promise<void> => {
-    const result = await invokePythonLambda({}, SAMPLE_CONTEXT);
+    const result: boolean = await invokePythonLambda({}, SAMPLE_CONTEXT);
     expect(result).toBe(true);
   });
 });

@@ -20,7 +20,6 @@ import * as path from 'path';
 import * as IAM from 'aws-cdk-lib/aws-iam';
 import { defaultAppSyncResponseMapping, type FWConstructProps } from './types';
 import { RetainedTopicSuffix } from '@bfw/shared/src/appsync';
-import * as cdk from 'aws-cdk-lib';
 
 export class RetainedTopicsConstruct extends Construct {
   constructor(scope: Construct, id: string, props: FWConstructProps) {

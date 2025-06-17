@@ -53,7 +53,7 @@ export class DeviceStatsConstruct extends Construct {
     // Create AppSync data source for the DynamoDB table
     const deviceStatsDataSource: AppSync.DynamoDbDataSource =
       api.addDynamoDbDataSource('DeviceStatsConstruct', this.table);
-    
+
     // Create resolver for createDeviceStats mutation
     deviceStatsDataSource.createResolver('CreateDeviceStats', {
       typeName: 'Mutation',
@@ -107,8 +107,11 @@ export class DeviceStatsConstruct extends Construct {
 
     // Create AppSync data source for the Lambda function
     const getLatestStatsDataSource: AppSync.LambdaDataSource =
-      api.addLambdaDataSource('GetLatestStatsDataSource', getLatestStatsFunction);
-    
+      api.addLambdaDataSource(
+        'GetLatestStatsDataSource',
+        getLatestStatsFunction
+      );
+
     // Create resolver for getLatestDeviceStats query
     getLatestStatsDataSource.createResolver('GetLatestDeviceStats', {
       typeName: 'Query',
@@ -131,7 +134,7 @@ export class DeviceStatsConstruct extends Construct {
         ]
       }
     );
-    
+
     // Add CloudWatch metrics permission
     monitoringLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
@@ -140,22 +143,22 @@ export class DeviceStatsConstruct extends Construct {
         resources: ['*']
       })
     );
-    
+
     // Add IoT permissions
     monitoringLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
         effect: IAM.Effect.ALLOW,
         actions: [
           'iot:SearchIndex',
-          'iot:ListThingGroupsForThing'  // Add missing permission
+          'iot:ListThingGroupsForThing' // Add missing permission
         ],
         resources: [
           `arn:aws:iot:${props.region}:${props.accountId}:index/AWS_Things`,
-          `arn:aws:iot:${props.region}:${props.accountId}:thing/*`  // Add thing resource for ListThingGroupsForThing
+          `arn:aws:iot:${props.region}:${props.accountId}:thing/*` // Add thing resource for ListThingGroupsForThing
         ]
       })
     );
-    
+
     // Add AppSync permissions with IAM auth
     monitoringLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
@@ -174,7 +177,7 @@ export class DeviceStatsConstruct extends Construct {
 
     // Grant write access to the DynamoDB table directly
     this.table.grantWriteData(monitoringLambdaRole);
-    
+
     // Use Python implementation for device-stats-monitor
     const deviceStatsMonitorFunction: Lambda.Function = new Lambda.Function(
       this,
@@ -195,7 +198,7 @@ export class DeviceStatsConstruct extends Construct {
         environment: {
           PYTHONPATH: '/var/task:/opt/python',
           APPSYNC_API_URL: api.graphqlUrl,
-          DEVICE_STATS_TABLE: this.table.tableName  // Add table name for direct DynamoDB access
+          DEVICE_STATS_TABLE: this.table.tableName // Add table name for direct DynamoDB access
         }
       }
     );

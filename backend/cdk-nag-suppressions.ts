@@ -14,7 +14,7 @@
  */
 
 import { NagSuppressions } from 'cdk-nag';
-import { Construct } from 'constructs';
+import { type Construct } from 'constructs';
 
 export function addNagSuppressions(scope: Construct): void {
   // Add general suppressions for all resources
@@ -23,35 +23,42 @@ export function addNagSuppressions(scope: Construct): void {
     [
       {
         id: 'AwsSolutions-IAM5',
-        reason: 'Lambda invocation permissions require ARN:* pattern for AppSync service role',
+        reason:
+          'Lambda invocation permissions require ARN:* pattern for AppSync service role'
       },
       {
         id: 'AwsSolutions-L1',
-        reason: 'CDK BucketDeployment uses a fixed runtime version that cannot be changed without modifying the CDK library',
+        reason:
+          'CDK BucketDeployment uses a fixed runtime version that cannot be changed without modifying the CDK library'
       },
       {
         id: 'AwsSolutions-IAM4',
-        reason: 'Using AWSLambdaBasicExecutionRole is a best practice for Lambda functions that only need CloudWatch Logs permissions',
+        reason:
+          'Using AWSLambdaBasicExecutionRole is a best practice for Lambda functions that only need CloudWatch Logs permissions'
       },
       {
         id: 'AwsSolutions-COG3',
-        reason: 'Advanced security mode is not required for this prototype application',
+        reason:
+          'Advanced security mode is not required for this prototype application'
       },
       {
         id: 'AwsSolutions-S1',
-        reason: 'S3 server access logs are not required for this prototype application',
+        reason:
+          'S3 server access logs are not required for this prototype application'
       },
       {
         id: 'AwsSolutions-CFR1',
-        reason: 'Geo restrictions are not required for this prototype application',
+        reason:
+          'Geo restrictions are not required for this prototype application'
       },
       {
         id: 'AwsSolutions-CFR3',
-        reason: 'CloudFront access logging is not required for this prototype application',
+        reason:
+          'CloudFront access logging is not required for this prototype application'
       },
       {
         id: 'AwsSolutions-CFR4',
-        reason: 'TLS configuration will be handled in production environment',
+        reason: 'TLS configuration will be handled in production environment'
       }
     ],
     true // Apply to all child resources

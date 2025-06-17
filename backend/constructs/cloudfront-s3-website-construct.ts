@@ -201,7 +201,10 @@ export class CloudFrontS3WebSiteConstruct extends Construct {
                         return false;
                       }
                       // Use path relative to the current file
-                      const rootDir: string = path.resolve(import.meta.dirname, '../..');
+                      const rootDir: string = path.resolve(
+                        import.meta.dirname,
+                        '../..'
+                      );
                       spawnSync(
                         [
                           'pwd',

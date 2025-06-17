@@ -16,26 +16,58 @@
 import { SAMPLE_CONTEXT, SAMPLE_EVENT } from '../shared/src/utils';
 import { describe, expect, test, beforeEach } from '@jest/globals';
 import { mockClient, type AwsClientStub } from 'aws-sdk-client-mock';
-import { CloudWatchClient, GetMetricDataCommand } from '@aws-sdk/client-cloudwatch';
+import {
+  CloudWatchClient,
+  GetMetricDataCommand
+} from '@aws-sdk/client-cloudwatch';
 import { Lambda, InvokeCommand } from '@aws-sdk/client-lambda';
 
 // Mock CloudWatch and Lambda clients
-const cloudWatchClientMock: AwsClientStub<CloudWatchClient> = mockClient(CloudWatchClient);
+const cloudWatchClientMock: AwsClientStub<CloudWatchClient> =
+  mockClient(CloudWatchClient);
 const lambdaMock: AwsClientStub<Lambda> = mockClient(Lambda);
 
+// Define types for the event and response
+interface LambdaEvent {
+  arguments: {
+    type: string;
+    period: number;
+    start: string;
+  };
+  info: Record<string, unknown>;
+}
+
+interface LambdaResponse {
+  data: Array<{
+    metric: string;
+    timestamp: string;
+    value: number;
+  }>;
+}
+
 // Function to invoke the Python Lambda
-async function invokePythonLambda(event: any, context: any) {
+async function invokePythonLambda(
+  event: LambdaEvent,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _context: unknown
+): Promise<LambdaResponse> {
   // This would normally invoke the actual Lambda, but for testing we'll mock the response
-  const response = await lambdaMock.send(new InvokeCommand({
-    FunctionName: 'GetCloudwatchMetricDataFunction',
-    Payload: Buffer.from(JSON.stringify({
-      arguments: event.arguments,
-      info: event.info
-    }))
-  }));
-  
+  const response: AWS.Response<Lambda, 'send'> = await lambdaMock.send(
+    new InvokeCommand({
+      FunctionName: 'GetCloudwatchMetricDataFunction',
+      Payload: Buffer.from(
+        JSON.stringify({
+          arguments: event.arguments,
+          info: event.info
+        })
+      )
+    })
+  );
+
   // Parse the response payload
-  return JSON.parse(Buffer.from(response.Payload || '{}').toString());
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const payload: Buffer = (response.Payload as Buffer) || Buffer.from('{}');
+  return JSON.parse(payload.toString()) as LambdaResponse;
 }
 
 describe('Get CloudWatch Metric Data Python Lambda', (): void => {
@@ -43,7 +75,7 @@ describe('Get CloudWatch Metric Data Python Lambda', (): void => {
     // Reset all mocks
     cloudWatchClientMock.reset();
     lambdaMock.reset();
-    
+
     // Mock CloudWatch response
     cloudWatchClientMock.on(GetMetricDataCommand).resolves({
       MetricDataResults: [
@@ -67,39 +99,41 @@ describe('Get CloudWatch Metric Data Python Lambda', (): void => {
         }
       ]
     });
-    
+
     // Mock Lambda response
     lambdaMock.on(InvokeCommand).resolves({
       StatusCode: 200,
-      Payload: Buffer.from(JSON.stringify({
-        data: [
-          {
-            metric: 'iotconnectivitydashboard-connected-device-count',
-            timestamp: '2023-01-01T00:00:00.000Z',
-            value: 10
-          },
-          {
-            metric: 'iotconnectivitydashboard-connected-device-count',
-            timestamp: '2023-01-01T01:00:00.000Z',
-            value: 15
-          },
-          {
-            metric: 'iotconnectivitydashboard-disconnected-device-count',
-            timestamp: '2023-01-01T00:00:00.000Z',
-            value: 5
-          },
-          {
-            metric: 'iotconnectivitydashboard-disconnected-device-count',
-            timestamp: '2023-01-01T01:00:00.000Z',
-            value: 3
-          }
-        ]
-      }))
+      Payload: Buffer.from(
+        JSON.stringify({
+          data: [
+            {
+              metric: 'iotconnectivitydashboard-connected-device-count',
+              timestamp: '2023-01-01T00:00:00.000Z',
+              value: 10
+            },
+            {
+              metric: 'iotconnectivitydashboard-connected-device-count',
+              timestamp: '2023-01-01T01:00:00.000Z',
+              value: 15
+            },
+            {
+              metric: 'iotconnectivitydashboard-disconnected-device-count',
+              timestamp: '2023-01-01T00:00:00.000Z',
+              value: 5
+            },
+            {
+              metric: 'iotconnectivitydashboard-disconnected-device-count',
+              timestamp: '2023-01-01T01:00:00.000Z',
+              value: 3
+            }
+          ]
+        })
+      )
     });
   });
 
   test('Should return connected devices metrics', async (): Promise<void> => {
-    const result = await invokePythonLambda(
+    const result: LambdaResponse = await invokePythonLambda(
       {
         ...SAMPLE_EVENT,
         arguments: {
@@ -110,7 +144,7 @@ describe('Get CloudWatch Metric Data Python Lambda', (): void => {
       },
       SAMPLE_CONTEXT
     );
-    
+
     expect(result).toMatchObject({
       data: expect.arrayContaining([
         expect.objectContaining({
@@ -123,7 +157,7 @@ describe('Get CloudWatch Metric Data Python Lambda', (): void => {
   });
 
   test('Should return disconnect rate metrics', async (): Promise<void> => {
-    const result = await invokePythonLambda(
+    const result: LambdaResponse = await invokePythonLambda(
       {
         ...SAMPLE_EVENT,
         arguments: {
@@ -134,7 +168,7 @@ describe('Get CloudWatch Metric Data Python Lambda', (): void => {
       },
       SAMPLE_CONTEXT
     );
-    
+
     expect(result).toMatchObject({
       data: expect.arrayContaining([
         expect.objectContaining({

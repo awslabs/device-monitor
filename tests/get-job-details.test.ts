@@ -23,19 +23,61 @@ import { Lambda, InvokeCommand } from '@aws-sdk/client-lambda';
 const iotClientMock: AwsClientStub<IoTClient> = mockClient(IoTClient);
 const lambdaMock: AwsClientStub<Lambda> = mockClient(Lambda);
 
+// Define types for the event and response
+interface JobEvent {
+  arguments: {
+    jobId: string;
+  };
+  info: Record<string, unknown>;
+}
+
+interface JobStats {
+  canceled: number;
+  succeeded: number;
+  failed: number;
+  rejected: number;
+  queued: number;
+  inProgress: number;
+  removed: number;
+  timedOut: number;
+}
+
+interface JobResponse {
+  data: {
+    targetSelection: string;
+    status: string;
+    targets: string[];
+    description: string;
+    createdAt: string;
+    lastUpdatedAt: string;
+    stats: JobStats;
+    isConcurrent: boolean;
+  };
+}
+
 // Function to invoke the Python Lambda
-async function invokePythonLambda(event: any, context: any) {
+async function invokePythonLambda(
+  event: JobEvent,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _context: unknown
+): Promise<JobResponse> {
   // This would normally invoke the actual Lambda, but for testing we'll mock the response
-  const response = await lambdaMock.send(new InvokeCommand({
-    FunctionName: 'GetJobDetailsFunction',
-    Payload: Buffer.from(JSON.stringify({
-      arguments: event.arguments,
-      info: event.info
-    }))
-  }));
-  
+  const response: AWS.Response<Lambda, 'send'> = await lambdaMock.send(
+    new InvokeCommand({
+      FunctionName: 'GetJobDetailsFunction',
+      Payload: Buffer.from(
+        JSON.stringify({
+          arguments: event.arguments,
+          info: event.info
+        })
+      )
+    })
+  );
+
   // Parse the response payload
-  return JSON.parse(Buffer.from(response.Payload || '{}').toString());
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const payload: Buffer = (response.Payload as Buffer) || Buffer.from('{}');
+  return JSON.parse(payload.toString()) as JobResponse;
 }
 
 describe('Get Job Details Python Lambda', (): void => {
@@ -43,7 +85,7 @@ describe('Get Job Details Python Lambda', (): void => {
     // Reset all mocks
     iotClientMock.reset();
     lambdaMock.reset();
-    
+
     // Mock IoT response
     iotClientMock.on(DescribeJobCommand).resolves({
       job: {
@@ -67,36 +109,38 @@ describe('Get Job Details Python Lambda', (): void => {
         isConcurrent: true
       }
     });
-    
+
     // Mock Lambda response
     lambdaMock.on(InvokeCommand).resolves({
       StatusCode: 200,
-      Payload: Buffer.from(JSON.stringify({
-        data: {
-          targetSelection: 'CONTINUOUS',
-          status: 'IN_PROGRESS',
-          targets: ['arn:aws:iot:us-west-2:123456789012:thing/test-thing'],
-          description: 'Test job',
-          createdAt: '2023-01-01T00:00:00.000Z',
-          lastUpdatedAt: '2023-01-01T01:00:00.000Z',
-          stats: {
-            canceled: 0,
-            succeeded: 5,
-            failed: 1,
-            rejected: 0,
-            queued: 2,
-            inProgress: 3,
-            removed: 0,
-            timedOut: 0
-          },
-          isConcurrent: true
-        }
-      }))
+      Payload: Buffer.from(
+        JSON.stringify({
+          data: {
+            targetSelection: 'CONTINUOUS',
+            status: 'IN_PROGRESS',
+            targets: ['arn:aws:iot:us-west-2:123456789012:thing/test-thing'],
+            description: 'Test job',
+            createdAt: '2023-01-01T00:00:00.000Z',
+            lastUpdatedAt: '2023-01-01T01:00:00.000Z',
+            stats: {
+              canceled: 0,
+              succeeded: 5,
+              failed: 1,
+              rejected: 0,
+              queued: 2,
+              inProgress: 3,
+              removed: 0,
+              timedOut: 0
+            },
+            isConcurrent: true
+          }
+        })
+      )
     });
   });
 
   test('Should return job details', async (): Promise<void> => {
-    const result = await invokePythonLambda(
+    const result: JobResponse = await invokePythonLambda(
       {
         ...SAMPLE_EVENT,
         arguments: {
@@ -105,7 +149,7 @@ describe('Get Job Details Python Lambda', (): void => {
       },
       SAMPLE_CONTEXT
     );
-    
+
     expect(result).toMatchObject({
       data: expect.objectContaining({
         targetSelection: expect.any(String),

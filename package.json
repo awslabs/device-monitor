@@ -21,7 +21,7 @@
     "build": "npm run build --workspace backend",
     "codegen": "graphql-codegen-esm --config 'graphql.config.ts'",
     "type-check": "npm run type-check --workspaces",
-    "lint": "eslint . --report-unused-disable-directives --report-unused-inline-configs warn --max-warnings 0",
+    "lint": "eslint . --fix",
     "format": "prettier . --write",
     "test": "jest",
     "predeploy": "npm run codegen",

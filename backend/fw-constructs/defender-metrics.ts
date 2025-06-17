@@ -20,7 +20,6 @@ import { defaultAppSyncResponseMapping, type FWConstructProps } from './types';
 import { Construct } from 'constructs';
 import * as Lambda from 'aws-cdk-lib/aws-lambda';
 import * as AppSync from 'aws-cdk-lib/aws-appsync';
-import * as cdk from 'aws-cdk-lib';
 
 export class DefenderMetricsConstruct extends Construct {
   constructor(scope: Construct, id: string, props: FWConstructProps) {

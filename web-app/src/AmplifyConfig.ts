@@ -12,7 +12,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-/* eslint-disable */
 
 import { Amplify } from 'aws-amplify';
 import type { SharedConfig } from '@bfw/shared/src/types';
