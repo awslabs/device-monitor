@@ -167,13 +167,8 @@ export class DeviceStatsConstruct extends Construct {
       })
     );
 
-    // Add Cognito permissions for the Lambda to assume a role with Cognito auth
-    monitoringLambdaRole.addToPolicy(
-      new IAM.PolicyStatement({
-        actions: ['sts:AssumeRole'],
-        resources: ['*']
-      })
-    );
+    // REMOVED: STS AssumeRole permission - not needed for this Lambda function
+    // If cross-service authentication is needed, implement with specific role ARNs
 
     // Grant write access to the DynamoDB table directly
     this.table.grantWriteData(monitoringLambdaRole);
