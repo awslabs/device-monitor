@@ -165,7 +165,7 @@ THING_GROUPS = []
 THING_TYPES = []
 
 # Base paths for device-specific credentials
-ENDPOINT = AWS_CONFIG.get("endpoint", "a3o0cryk7wgci0-ats.iot.us-west-2.amazonaws.com")
+ENDPOINT = AWS_CONFIG.get("endpoint")
 CERTS_BASE_PATH = DEVICE_CONFIG.get("certs_base_path", "./certs")
 
 

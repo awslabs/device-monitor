@@ -470,3 +470,14 @@ cdk.context.json
 certs/
 device-simulator/device_registry.json
 device_registry.json
+video-generation/install.sh
+video-generation/package-lock.json
+video-generation/package.json
+video-generation/README.md
+video-generation/tsconfig.json
+video-generation/src/generate-captions.ts
+video-generation/src/generate-narration.ts
+video-generation/src/index.ts
+video-generation/src/sync-video.ts
+video-generation/src/types.ts
+video-generation/src/utils.ts
