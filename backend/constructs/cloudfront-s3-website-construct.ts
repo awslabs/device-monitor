@@ -107,6 +107,24 @@ export class CloudFrontS3WebSiteConstruct extends Construct {
     props = { ...defaultProps, ...props };
     const stack: Stack = Stack.of(this);
 
+    // Create access logs bucket
+    const accessLogsBucket: S3.Bucket = new S3.Bucket(
+      this,
+      'WebAppAccessLogs',
+      {
+        encryption: S3.BucketEncryption.S3_MANAGED,
+        blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
+        removalPolicy: RemovalPolicy.DESTROY,
+        enforceSSL: true,
+        lifecycleRules: [
+          {
+            id: 'DeleteAccessLogsAfter90Days',
+            expiration: Duration.days(90)
+          }
+        ]
+      }
+    );
+
     // When using Distribution, do not set the s3 bucket website documents
     // if these are set then the distribution origin is configured for HTTP communication with the
     // s3 bucket and won't configure the cloudformation correctly.
@@ -115,7 +133,9 @@ export class CloudFrontS3WebSiteConstruct extends Construct {
       autoDeleteObjects: true,
       blockPublicAccess: S3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: RemovalPolicy.DESTROY,
-      enforceSSL: true
+      enforceSSL: true,
+      serverAccessLogsBucket: accessLogsBucket,
+      serverAccessLogsPrefix: 'access-logs/'
     });
 
     this.siteBucket.addToResourcePolicy(
@@ -139,6 +159,31 @@ export class CloudFrontS3WebSiteConstruct extends Construct {
           originAccessLevels: [CloudFront.AccessLevel.READ]
         }
       );
+
+    // Create CloudFront access logs bucket
+    const cloudFrontLogsBucket: S3.Bucket = new S3.Bucket(
+      this,
+      'CloudFrontAccessLogs',
+      {
+        encryption: S3.BucketEncryption.S3_MANAGED,
+        // CloudFront requires ACL access to write logs, so we need to allow ACLs
+        blockPublicAccess: new S3.BlockPublicAccess({
+          blockPublicAcls: false, // Allow CloudFront service to set ACLs
+          ignorePublicAcls: true,
+          blockPublicPolicy: true,
+          restrictPublicBuckets: true
+        }),
+        objectOwnership: S3.ObjectOwnership.BUCKET_OWNER_PREFERRED, // Required for CloudFront logging
+        removalPolicy: RemovalPolicy.DESTROY,
+        enforceSSL: true,
+        lifecycleRules: [
+          {
+            id: 'DeleteCloudFrontLogsAfter90Days',
+            expiration: Duration.days(90)
+          }
+        ]
+      }
+    );
 
     const cloudFrontDistribution: CloudFront.Distribution =
       new CloudFront.Distribution(this, 'WebAppDistribution', {
@@ -166,7 +211,19 @@ export class CloudFrontS3WebSiteConstruct extends Construct {
         ],
         defaultRootObject: 'index.html',
         webAclId: props.webAclArn,
-        minimumProtocolVersion: CloudFront.SecurityPolicyProtocol.TLS_V1_2_2021 // Required by security
+        minimumProtocolVersion: CloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
+        enableLogging: true,
+        logBucket: cloudFrontLogsBucket,
+        logFilePrefix: 'cloudfront-access-logs/',
+        geoRestriction: CloudFront.GeoRestriction.allowlist(
+          'US',
+          'CA',
+          'GB',
+          'DE',
+          'FR',
+          'JP',
+          'AU'
+        ) // Add geo restrictions for security
       });
 
     const webappConfig: SharedConfig = {

@@ -44,10 +44,22 @@ export default class ThingGroupsConstruct extends Construct {
           'iot:ListThingGroups',
           'iot:ListThingGroupsForThing',
           'iot:ListThingsInThingGroup',
-          'iot:DescribeThingGroup',
-          'iot:SearchIndex'
+          'iot:DescribeThingGroup'
         ],
-        resources: ['*']
+        resources: [
+          `arn:aws:iot:${props.region}:${props.accountId}:thinggroup/*`,
+          `arn:aws:iot:${props.region}:${props.accountId}:thing/*`
+        ]
+      })
+    );
+
+    // Separate policy for SearchIndex which requires specific index ARN
+    listThingGroupRole.addToPolicy(
+      new IAM.PolicyStatement({
+        actions: ['iot:SearchIndex'],
+        resources: [
+          `arn:aws:iot:${props.region}:${props.accountId}:index/AWS_Things`
+        ]
       })
     );
 
@@ -56,7 +68,7 @@ export default class ThingGroupsConstruct extends Construct {
       this,
       'listThingGroupsLambda',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12,
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,

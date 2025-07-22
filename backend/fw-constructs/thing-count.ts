@@ -52,7 +52,7 @@ export default class ThingCountConstruct extends Construct {
       this,
       'GetThingCountFunction',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12,
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,

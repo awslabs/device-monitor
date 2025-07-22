@@ -31,7 +31,11 @@ export class UserPreferenceTable extends Construct {
       billingMode: DynamoDB.BillingMode.PAY_PER_REQUEST,
       // path to production item: remove
       removalPolicy: RemovalPolicy.DESTROY,
-      timeToLiveAttribute: 'ttl'
+      timeToLiveAttribute: 'ttl',
+      pointInTimeRecoverySpecification: {
+        // Updated to use new property name
+        pointInTimeRecoveryEnabled: true
+      }
     });
   }
 }

@@ -40,7 +40,11 @@ export class DeviceStatsConstruct extends Construct {
       },
       billingMode: DynamoDB.BillingMode.PAY_PER_REQUEST,
       removalPolicy: RemovalPolicy.DESTROY,
-      timeToLiveAttribute: 'ttl'
+      timeToLiveAttribute: 'ttl',
+      pointInTimeRecoverySpecification: {
+        // Updated to use new property name
+        pointInTimeRecoveryEnabled: true
+      }
     });
 
     // Add GSI for latest record lookup
@@ -84,7 +88,7 @@ export class DeviceStatsConstruct extends Construct {
       this,
       'GetLatestStatsFunction',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12, // Updated to latest runtime
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,
@@ -135,12 +139,17 @@ export class DeviceStatsConstruct extends Construct {
       }
     );
 
-    // Add CloudWatch metrics permission
+    // Add CloudWatch metrics permission with namespace restriction
     monitoringLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
         effect: IAM.Effect.ALLOW,
         actions: ['cloudwatch:PutMetricData'],
-        resources: ['*']
+        resources: ['*'],
+        conditions: {
+          StringEquals: {
+            'cloudwatch:namespace': 'FleetWatch/DeviceStats'
+          }
+        }
       })
     );
 
@@ -178,7 +187,7 @@ export class DeviceStatsConstruct extends Construct {
       this,
       'DeviceStatsMonitor',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12, // Updated to latest runtime
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,

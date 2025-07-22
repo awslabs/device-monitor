@@ -215,7 +215,8 @@ exports.handler = async (event) => {
           'iot:GetIndexingConfiguration'
         ],
         resources: ['*']
-        // Required for IoT fleet indexing which doesn't support resource-level permissions
+        // REQUIRED: IoT fleet indexing configuration is a global account-level setting
+        // that doesn't support resource-level permissions. This is an AWS service limitation.
       })
     );
 

@@ -38,18 +38,28 @@ export class CloudWatchMetricsConstruct extends Construct {
       }
     );
 
-    // Add CloudWatch permissions
+    // Add CloudWatch permissions with namespace restrictions
     getCloudwatchMetricDataLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
         actions: ['cloudwatch:GetMetricData'],
-        resources: ['*']
+        resources: ['*'],
+        conditions: {
+          StringLike: {
+            'cloudwatch:namespace': [
+              'AWS/IoT*',
+              'FleetWatch/*',
+              'AWS/Lambda',
+              'AWS/AppSync'
+            ]
+          }
+        }
       })
     );
 
     // Create the Python Lambda function
     const getCloudwatchMetricDataFunction: Lambda.Function =
       new Lambda.Function(this, 'GetCloudwatchMetricDataFunction', {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12,
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,

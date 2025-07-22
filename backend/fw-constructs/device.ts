@@ -63,7 +63,7 @@ export class DeviceConstruct extends Construct {
       this,
       'getDevice',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12,
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,

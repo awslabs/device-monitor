@@ -61,7 +61,7 @@ const appStack: AppStack = new AppStack(app, stackName, {
 
 appStack.addDependency(cfWafStack);
 
-// Add Aws Solutions Checks and suppress rules
+// Add Aws Solutions Checks and apply suppressions for acceptable violations
 Aspects.of(app).add(new AwsSolutionsChecks({ logIgnores: true }));
 suppressCdkNagRules(cfWafStack);
 suppressCdkNagRules(appStack);

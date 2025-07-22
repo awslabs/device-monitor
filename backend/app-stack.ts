@@ -20,7 +20,7 @@ import { CfnOutput, Stack, type StackProps } from 'aws-cdk-lib/core';
 import { SsmParameterReaderConstruct } from './constructs/ssm-parameter-reader-construct';
 import { CloudFrontS3WebSiteConstruct } from './constructs/cloudfront-s3-website-construct';
 import { IoTFleetIndexingConstruct } from './constructs/iot-fleet-indexing-construct';
-import { addNagSuppressions, addSpecificIAM5Suppressions } from './cdk-nag-suppressions';
+import { addNagSuppressions } from './cdk-nag-suppressions';
 
 export interface AppStackProps extends StackProps {
   readonly ssmWafArnParameterName: string;
@@ -59,9 +59,8 @@ export class AppStack extends Stack {
       }
     );
 
-    // Add CDK-nag suppressions
+    // Apply CDK nag suppressions for acceptable security violations
     addNagSuppressions(this);
-    addSpecificIAM5Suppressions(this);
 
     const webapp: CloudFrontS3WebSiteConstruct =
       new CloudFrontS3WebSiteConstruct(this, 'WebApp', {

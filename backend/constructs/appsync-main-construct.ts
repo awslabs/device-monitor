@@ -68,7 +68,7 @@ export class AppSyncBackendConstruct extends Construct {
           {
             bundling: {
               image: cdk.DockerImage.fromRegistry(
-                'public.ecr.aws/sam/build-python3.10:latest'
+                'public.ecr.aws/sam/build-python3.12:latest' // Updated to Python 3.12
               ),
               command: [
                 'bash',
@@ -82,7 +82,7 @@ export class AppSyncBackendConstruct extends Construct {
             }
           }
         ),
-        compatibleRuntimes: [Lambda.Runtime.PYTHON_3_10],
+        compatibleRuntimes: [Lambda.Runtime.PYTHON_3_12], // Updated to latest runtime
         description: 'Shared Python utilities for AppSync resolvers'
       }
     );

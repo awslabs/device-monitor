@@ -59,7 +59,7 @@ export class ThingShadowConstruct extends Construct {
       this,
       'getThingShadowFunction',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12,
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,

@@ -40,13 +40,19 @@ export class JobsConstruct extends Construct {
     );
     listJobsLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
-        actions: [
-          'iot:ListJobs',
-          'iot:ListThings',
-          'iot:ListThingGroups',
-          'iot:DescribeJob'
-        ],
-        resources: ['*']
+        actions: ['iot:ListJobs', 'iot:DescribeJob'],
+        resources: [`arn:aws:iot:${props.region}:${props.accountId}:job/*`]
+      })
+    );
+
+    // Separate policy for ListThings and ListThingGroups with specific resources
+    listJobsLambdaRole.addToPolicy(
+      new IAM.PolicyStatement({
+        actions: ['iot:ListThings', 'iot:ListThingGroups'],
+        resources: [
+          `arn:aws:iot:${props.region}:${props.accountId}:thing/*`,
+          `arn:aws:iot:${props.region}:${props.accountId}:thinggroup/*`
+        ]
       })
     );
 
@@ -55,7 +61,7 @@ export class JobsConstruct extends Construct {
       this,
       'ListJobsFunction',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12,
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,
@@ -106,7 +112,7 @@ export class JobsConstruct extends Construct {
       this,
       'GetJobDetailsFunction',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12,
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,
@@ -151,7 +157,10 @@ export class JobsConstruct extends Construct {
           'iot:ListJobExecutionsForJob',
           'iot:ListJobExecutionsForThing'
         ],
-        resources: ['*']
+        resources: [
+          `arn:aws:iot:${props.region}:${props.accountId}:job/*`,
+          `arn:aws:iot:${props.region}:${props.accountId}:thing/*`
+        ]
       })
     );
 
@@ -160,7 +169,7 @@ export class JobsConstruct extends Construct {
       this,
       'ListExecutionsFunction',
       {
-        runtime: Lambda.Runtime.PYTHON_3_10,
+        runtime: Lambda.Runtime.PYTHON_3_12,
         code: Lambda.Code.fromAsset(
           path.join(
             import.meta.dirname,

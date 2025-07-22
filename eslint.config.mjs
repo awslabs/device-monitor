@@ -13,7 +13,8 @@ export default tseslint.config(
       '**/dist/**',
       '**/build/**',
       '**/cdk.out/**',
-      '**/.venv/**'
+      '**/.venv/**',
+      'video-generation/**' // Exclude video-generation from linting
     ]
   },
   eslint.configs.recommended,

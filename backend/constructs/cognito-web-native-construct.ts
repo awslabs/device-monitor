@@ -63,7 +63,13 @@ export class CognitoWebNativeConstruct extends Construct {
           username: true,
           preferredUsername: true
         },
-        removalPolicy: cdk.RemovalPolicy.DESTROY
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+        mfa: cdk.aws_cognito.Mfa.OPTIONAL, // Enable MFA for security
+        mfaSecondFactor: {
+          sms: true,
+          otp: true
+        }
+        // Note: advancedSecurityMode requires Cognito Plus plan, removed for cost optimization
       }
     );
 
