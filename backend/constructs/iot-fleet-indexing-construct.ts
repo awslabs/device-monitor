@@ -21,6 +21,7 @@ import * as cr from 'aws-cdk-lib/custom-resources';
 import * as cdk from 'aws-cdk-lib';
 import { Duration } from 'aws-cdk-lib';
 
+
 export class IoTFleetIndexingConstruct extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);

@@ -139,17 +139,13 @@ export class DeviceStatsConstruct extends Construct {
       }
     );
 
-    // Add CloudWatch metrics permission with namespace restriction
+    // Add CloudWatch metrics permission without namespace restriction
     monitoringLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
         effect: IAM.Effect.ALLOW,
         actions: ['cloudwatch:PutMetricData'],
-        resources: ['*'],
-        conditions: {
-          StringEquals: {
-            'cloudwatch:namespace': 'FleetWatch/DeviceStats'
-          }
-        }
+        resources: ['*']
+        // Removed the condition that was causing the AccessDenied error
       })
     );
 

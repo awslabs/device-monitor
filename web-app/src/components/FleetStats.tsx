@@ -137,7 +137,7 @@ export const FleetStats: FunctionComponent = (): ReactElement => {
                     {
                       operator: '=',
                       propertyKey: 'connectivity.connected',
-                      value: title === 'Connected'
+                      value: title === 'Connected' ? 'true' : 'false'
                     }
                   ]
                 })}`

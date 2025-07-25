@@ -980,6 +980,51 @@ class IoTDevice:
         # Also publish the device state as a retained message
         self.publish_device_state()
         
+        # Update classic shadow to ensure connection status is consistent
+        self.update_classic_shadow()
+        
+    def update_classic_shadow(self):
+        """
+        Update the classic (unnamed) shadow for the device with connection status.
+        This ensures the connection status is consistent across all shadow types.
+        """
+        if not self.connected:
+            return
+            
+        # Get region from AWS config
+        region = AWS_CONFIG.get("region")
+        if not region:
+            raise ValueError("AWS region not specified in configuration")
+        
+        # Direct update via IoT Data API
+        try:
+            # Create a simple shadow document with connection status
+            shadow_doc = {
+                "state": {
+                    "reported": {
+                        "connected": self.connected,
+                        "lastUpdatedAt": int(time.time()),
+                        "firmwareVersion": self.fw_version,
+                        "firmwareType": self.firmware_type,
+                        "brandName": self.brand_name
+                    }
+                }
+            }
+            
+            # Create IoT Data client
+            iot_data = boto3.client("iot-data", region_name=region)
+            
+            # Update shadow using API
+            response = iot_data.update_thing_shadow(
+                thingName=self.device_id,
+                payload=json.dumps(shadow_doc).encode('utf-8')
+            )
+            
+            print(f"{self.device_id}: Updated classic shadow with connection status: {self.connected}")
+            
+        except Exception as e:
+            print(f"{self.device_id}: Error updating classic shadow: {str(e)}")
+        
     def update_package_shadow(self):
         """
         Update the $package shadow with firmware information
@@ -1563,6 +1608,11 @@ def device_simulation(device):
     # Create IoT client for job operations
     region = AWS_CONFIG.get("region")
     iot_client = boto3.client("iot", region_name=region)
+    
+    # Connection management variables
+    connection_attempts = 0
+    max_connection_attempts = 3
+    connection_backoff = 5  # seconds
 
     while True:
         try:
@@ -1575,21 +1625,30 @@ def device_simulation(device):
                     random.uniform(reconnect_min, reconnect_max)
                 )  # Random downtime
 
-            # Normal connection logic
+            # Connection logic with retry limits and backoff
             if not device.connected:
-                print(f"{device.device_id} attempting to connect...")
-                if device.connect():
-                    print(f"{device.device_id} connected successfully")
+                if connection_attempts < max_connection_attempts:
+                    print(f"{device.device_id} attempting to connect... (attempt {connection_attempts + 1}/{max_connection_attempts})")
+                    if device.connect():
+                        print(f"{device.device_id} connected successfully")
+                        connection_attempts = 0  # Reset counter on success
+                    else:
+                        connection_attempts += 1
+                        backoff_time = connection_backoff * (2 ** (connection_attempts - 1))  # Exponential backoff
+                        print(f"{device.device_id} connection failed, waiting {backoff_time}s before retry")
+                        time.sleep(backoff_time)
+                        continue
                 else:
-                    print(f"{device.device_id} connection failed, waiting before retry")
-                    time.sleep(10)
+                    print(f"{device.device_id} max connection attempts reached, skipping for now")
+                    time.sleep(30)  # Longer wait before trying again
+                    connection_attempts = 0  # Reset counter
                     continue
 
             # If connected, update shadow
             device.update_shadow()
 
-            # Randomly create firmware update jobs
-            if random.random() < job_creation_probability:
+            # Reduce job creation probability to limit API calls
+            if random.random() < job_creation_probability * 0.5:  # Reduced probability
                 # Generate a random version number
                 major = random.randint(1, 3)
                 minor = random.randint(0, 9)
@@ -1617,10 +1676,8 @@ def device_simulation(device):
                 if delete_job(iot_client, job_to_delete):
                     created_jobs.remove(job_to_delete)
             
-            # Randomly publish additional retained messages to other topics
-            if (
-                random.random() < 0.2
-            ):  # 20% chance to publish additional retained messages
+            # Reduce frequency of retained message publishing
+            if random.random() < 0.1:  # Reduced from 0.2 to 0.1
                 # Get retained message patterns from config
                 retained_config = config.config.get("retained_messages", {})
                 topic_patterns = retained_config.get("topic_patterns", [])
@@ -1702,9 +1759,9 @@ def device_simulation(device):
                                 f"{device.device_id}: Error publishing retained message to {topic}: {str(e)}"
                             )
 
-            # Randomly clear retained messages
+            # Randomly clear retained messages - reduced frequency
             if (
-                random.random() < 0.1  # 10% chance to clear a retained message
+                random.random() < 0.05  # Reduced from 0.1 to 0.05
                 and device.device_id in IoTDevice.retained_topics
                 and IoTDevice.retained_topics[
                     device.device_id
@@ -1725,8 +1782,8 @@ def device_simulation(device):
                             f"{device.device_id}: Error clearing retained message: {str(e)}"
                         )
 
-            # Add a random delay between updates based on config
-            time.sleep(random.uniform(update_min, update_max))
+            # Add a random delay between updates based on config - increased slightly
+            time.sleep(random.uniform(update_min * 1.5, update_max * 1.5))
 
         except Exception as e:
             print(f"Error in {device.device_id}: {str(e)}")

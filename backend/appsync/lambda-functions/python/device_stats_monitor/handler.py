@@ -189,46 +189,62 @@ def publish_metrics(device_stats: Dict[str, Any]) -> None:
     logger.debug("Publishing metrics to CloudWatch")
     
     try:
-        # Create metric data
+        # Calculate disconnect rate
+        registered_devices = device_stats.get("registeredDevices", 0)
+        disconnected_devices = device_stats.get("disconnectedDevices", 0)
+        disconnect_rate = (disconnected_devices / registered_devices * 100) if registered_devices > 0 else 0
+        
+        # Create metric data with correct names and namespace for frontend compatibility
         metric_data = [
             {
-                'MetricName': 'RegisteredDevices',
-                'Value': device_stats.get("registeredDevices", 0),
-                'Unit': 'Count',
-                'Dimensions': [
-                    {
-                        'Name': 'Environment',
-                        'Value': 'Production'
-                    }
-                ]
-            },
-            {
-                'MetricName': 'ConnectedDevices',
+                'MetricName': 'iotconnectivitydashboard-connected-device-count',
                 'Value': device_stats.get("connectedDevices", 0),
                 'Unit': 'Count',
                 'Dimensions': [
                     {
-                        'Name': 'Environment',
-                        'Value': 'Production'
+                        'Name': 'AggregationType',
+                        'Value': 'count'
                     }
                 ]
             },
             {
-                'MetricName': 'DisconnectedDevices',
+                'MetricName': 'iotconnectivitydashboard-disconnected-device-count',
                 'Value': device_stats.get("disconnectedDevices", 0),
                 'Unit': 'Count',
                 'Dimensions': [
                     {
-                        'Name': 'Environment',
-                        'Value': 'Production'
+                        'Name': 'AggregationType',
+                        'Value': 'count'
+                    }
+                ]
+            },
+            {
+                'MetricName': 'iotconnectivitydashboard-disconnection-rate',
+                'Value': disconnect_rate,
+                'Unit': 'Percent',
+                'Dimensions': [
+                    {
+                        'Name': 'AggregationType',
+                        'Value': 'count'
+                    }
+                ]
+            },
+            {
+                'MetricName': 'iotconnectivitydashboard-all-device-count',
+                'Value': device_stats.get("registeredDevices", 0),
+                'Unit': 'Count',
+                'Dimensions': [
+                    {
+                        'Name': 'AggregationType',
+                        'Value': 'count'
                     }
                 ]
             }
         ]
         
-        # Put metric data
+        # Put metric data to IoTFleetMetrics namespace
         cloudwatch.put_metric_data(
-            Namespace='FleetWatch',
+            Namespace='IoTFleetMetrics',
             MetricData=metric_data
         )
         

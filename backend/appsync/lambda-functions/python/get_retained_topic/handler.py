@@ -39,11 +39,17 @@ def get_retained_topic(thing_name: str, topic_name: str) -> Dict[str, Any]:
     """
     logger.debug("Getting retained topic", extra={"thing_name": thing_name, "topic_name": topic_name})
     
-    # Construct the full topic path
-    topic = f"things/{thing_name}/topics/{topic_name}"
+    # Try multiple topic formats to find retained messages
+    topic_formats = [
+        f"things/{thing_name}/topics/{topic_name}",  # Original expected format
+        f"device/{thing_name}/{topic_name}",         # Device simulator format with suffix
+        f"device/{thing_name}/state"                 # Device simulator actual format (for any suffix)
+    ]
     
-    try:
+    for topic in topic_formats:
         try:
+            logger.debug(f"Trying topic format: {topic}")
+            
             # Get the retained message
             response = iot_data_client.get_retained_message(topic=topic)
             
@@ -64,23 +70,23 @@ def get_retained_topic(thing_name: str, topic_name: str) -> Dict[str, Any]:
                 "timestamp": last_modified_time or 0
             }
             
-            logger.debug("Got retained topic", extra={"topic": topic})
+            logger.info(f"Found retained topic data at: {topic}")
             return result
             
         except iot_data_client.exceptions.ResourceNotFoundException:
-            # Handle case where retained message doesn't exist
-            logger.warning(f"Retained message not found for topic {topic}")
-            
-            # Return empty result structure instead of error
-            return {
-                "topic": topic,
-                "payload": {},
-                "timestamp": 0
-            }
+            logger.debug(f"No retained message found for topic: {topic}")
+            continue
+        except Exception as e:
+            logger.warning(f"Error checking topic {topic}: {str(e)}")
+            continue
     
-    except Exception as e:
-        logger.error(f"Error getting retained topic: {str(e)}")
-        raise
+    # If no topic format worked, return empty result
+    logger.warning(f"No retained message found for {thing_name} with suffix {topic_name} in any format")
+    return {
+        "topic": f"things/{thing_name}/topics/{topic_name}",  # Return expected format in response
+        "payload": {},
+        "timestamp": 0
+    }
 
 @tracer.capture_lambda_handler
 @logger.inject_lambda_context(log_event=True)

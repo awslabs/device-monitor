@@ -42,10 +42,19 @@ export class RetainedTopicsConstruct extends Construct {
     getRetainedTopicLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
         actions: ['iot:GetRetainedMessage'],
-        resources: Object.values(RetainedTopicSuffix).map(
-          (topicName: string): string =>
-            `arn:aws:iot:${props.region}:${props.accountId}:topic/things/*/topics/${topicName}`
-        )
+        resources: [
+          // Original expected format
+          ...Object.values(RetainedTopicSuffix).map(
+            (topicName: string): string =>
+              `arn:aws:iot:${props.region}:${props.accountId}:topic/things/*/topics/${topicName}`
+          ),
+          // Device simulator formats
+          `arn:aws:iot:${props.region}:${props.accountId}:topic/device/*/state`,
+          ...Object.values(RetainedTopicSuffix).map(
+            (topicName: string): string =>
+              `arn:aws:iot:${props.region}:${props.accountId}:topic/device/*/${topicName}`
+          )
+        ]
       })
     );
 

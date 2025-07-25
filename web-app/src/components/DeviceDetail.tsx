@@ -136,6 +136,15 @@ export const DeviceDetail: FunctionComponent<DeviceDetailProps> = ({
     fetchDeviceData().catch(console.error);
   }, [thingName]);
 
+  // Add debug logging for connection status
+  useEffect(() => {
+    if (deviceData) {
+      console.log('DeviceDetail - Device Data:', deviceData);
+      console.log('DeviceDetail - Connection Status:', deviceData.connected);
+      console.log('DeviceDetail - Connection Status Type:', typeof deviceData.connected);
+    }
+  }, [deviceData]);
+
   return (
     <ContentLayout
       header={
@@ -179,11 +188,17 @@ export const DeviceDetail: FunctionComponent<DeviceDetailProps> = ({
                       (value as string) || '-';
                     switch (key) {
                       case 'connected':
+                        // Handle connection status explicitly
+                        // Convert to boolean and log for debugging
+                        const rawValue = value;
+                        const isConnected = rawValue === true || rawValue === 'true';
+                        console.log(`DeviceDetail - Raw connection value: ${rawValue}, type: ${typeof rawValue}, isConnected: ${isConnected}`);
+                        
                         formattedValue = (
                           <StatusIndicator
-                            type={(value as boolean) ? 'success' : 'error'}
+                            type={isConnected ? 'success' : 'error'}
                           >
-                            {value ? 'Connected' : 'Disconnected'}
+                            {isConnected ? 'Connected' : 'Disconnected'}
                           </StatusIndicator>
                         );
                         break;

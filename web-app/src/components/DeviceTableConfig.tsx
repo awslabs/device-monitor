@@ -125,11 +125,19 @@ export function getDeviceTableColumns(
     {
       id: 'connected',
       header: 'Status',
-      cell: (item: ThingSummary): ReactElement => (
-        <StatusIndicator type={item.connected ? 'success' : 'error'}>
-          {item.connected ? 'Connected' : 'Disconnected'}
-        </StatusIndicator>
-      ),
+      cell: (item: ThingSummary): ReactElement => {
+        // Handle connection status explicitly
+        // Convert to boolean and log for debugging
+        const rawValue = item.connected;
+        const isConnected = rawValue === true || rawValue === 'true';
+        console.log(`DeviceList - Item ${item.thingName} - Raw connection value: ${rawValue}, type: ${typeof rawValue}, isConnected: ${isConnected}`);
+        
+        return (
+          <StatusIndicator type={isConnected ? 'success' : 'error'}>
+            {isConnected ? 'Connected' : 'Disconnected'}
+          </StatusIndicator>
+        );
+      },
       sortingField: 'connected',
       minWidth: 50,
       width: findWidthInContentDisplay('connected', config)

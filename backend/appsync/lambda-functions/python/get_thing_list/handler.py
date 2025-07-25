@@ -21,6 +21,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from shared_lib.powertools import logger, tracer, metrics
 from shared_lib.appsync_utils import create_response, create_error_response
+from shared_lib.iot_utils import get_device_connection_status
 import boto3
 
 # Initialize IoT client
@@ -165,10 +166,19 @@ def get_thing_list(filter_input: Optional[Dict[str, Any]], max_results: Optional
                 logger.warning(f"Failed to parse shadow JSON: {e}")
         
         # Create thing summary
+        # Get the raw connection status from the thing data
+        raw_connected = thing.get("connectivity", {}).get("connected", False)
+        
+        # Get connection status using the consistent function
+        connected_value = get_device_connection_status(thing.get("thingName", ""))
+        
+        # Log both values for debugging
+        logger.debug(f"Thing {thing.get('thingName', '')}: raw_connected={raw_connected}, consistent_connected={connected_value}")
+            
         thing_summary = {
             "thingName": thing.get("thingName", ""),
             "deviceType": thing.get("thingTypeName", ""),
-            "connected": bool(thing.get("connectivity", {}).get("connected", False)),
+            "connected": connected_value,  # Use the consistent connection status
             "lastConnectedAt": thing.get("connectivity", {}).get("timestamp"),
             "disconnectReason": thing.get("connectivity", {}).get("disconnectReason"),
             "productionTimestamp": int(thing.get("attributes", {}).get("productionTimestamp", 0)),

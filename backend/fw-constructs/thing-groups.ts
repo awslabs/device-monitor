@@ -41,7 +41,6 @@ export default class ThingGroupsConstruct extends Construct {
     listThingGroupRole.addToPolicy(
       new IAM.PolicyStatement({
         actions: [
-          'iot:ListThingGroups',
           'iot:ListThingGroupsForThing',
           'iot:ListThingsInThingGroup',
           'iot:DescribeThingGroup'
@@ -50,6 +49,14 @@ export default class ThingGroupsConstruct extends Construct {
           `arn:aws:iot:${props.region}:${props.accountId}:thinggroup/*`,
           `arn:aws:iot:${props.region}:${props.accountId}:thing/*`
         ]
+      })
+    );
+
+    // Add ListThingGroups permission on all resources
+    listThingGroupRole.addToPolicy(
+      new IAM.PolicyStatement({
+        actions: ['iot:ListThingGroups'],
+        resources: ['*']
       })
     );
 

@@ -18,6 +18,7 @@ import time
 import argparse
 import os
 import sys
+import resource
 
 from device_sim import IoTDevice, device_simulation
 from config_loader import config, load_config
@@ -34,11 +35,44 @@ def parse_arguments():
         default="dev-config.yaml",
         help="Path to configuration file (default: dev-config.yaml)",
     )
+    parser.add_argument(
+        "--max-devices",
+        type=int,
+        default=0,
+        help="Maximum number of devices to simulate (overrides config)",
+    )
+    parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=0,
+        help="Maximum number of concurrent worker threads (default: min(32, device_count))",
+    )
     return parser.parse_args()
+
+
+def increase_file_descriptor_limit():
+    """Attempt to increase the file descriptor limit"""
+    try:
+        # Get current soft and hard limits
+        soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        print(f"Current file descriptor limits: soft={soft}, hard={hard}")
+        
+        # Try to increase to hard limit or a reasonable value
+        new_soft = min(hard, 4096)
+        resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
+        
+        # Verify the new limits
+        soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+        print(f"Updated file descriptor limits: soft={soft}, hard={hard}")
+    except Exception as e:
+        print(f"Warning: Could not increase file descriptor limit: {e}")
 
 
 def main():
     """Main function to run the simulation"""
+    # Try to increase file descriptor limit
+    increase_file_descriptor_limit()
+    
     # Print debug information to help with troubleshooting
     print(f"Python executable: {sys.executable}")
     print(f"Current file: {__file__}")
@@ -65,20 +99,36 @@ def main():
     # Get device count from config
     sim_config = config.get_simulation_config()
     device_count = sim_config.get("device_count", 1)
-
-    print(f"Starting simulation with {device_count} devices")
+    
+    # Override with command line argument if provided
+    if args.max_devices > 0:
+        device_count = min(device_count, args.max_devices)
+    
+    # Determine max workers - limit to avoid too many concurrent connections
+    max_workers = args.max_workers if args.max_workers > 0 else min(32, device_count)
+    
+    print(f"Starting simulation with {device_count} devices using {max_workers} worker threads")
     print(f"Using configuration from: {args.config}")
 
     # Create devices based on config - after thing groups and types are created
     devices = [IoTDevice(i) for i in range(device_count)]
-
-    # Start device simulations in thread pool
-    with ThreadPoolExecutor(max_workers=device_count) as executor:
-        futures = [executor.submit(device_simulation, device) for device in devices]
-
-        # Wait for all simulations to complete
-        for future in futures:
-            future.result()
+    
+    # Start device simulations in batches to avoid overwhelming the system
+    batch_size = max_workers
+    for i in range(0, device_count, batch_size):
+        batch_devices = devices[i:i+batch_size]
+        print(f"Starting batch of {len(batch_devices)} devices ({i+1}-{i+len(batch_devices)} of {device_count})")
+        
+        # Start device simulations in thread pool
+        with ThreadPoolExecutor(max_workers=len(batch_devices)) as executor:
+            futures = [executor.submit(device_simulation, device) for device in batch_devices]
+            
+            # Wait for all simulations in this batch to complete
+            for future in futures:
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"Device simulation failed: {e}")
 
 
 # This ensures the code is only run when this file is executed directly

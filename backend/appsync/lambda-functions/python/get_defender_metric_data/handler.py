@@ -81,27 +81,54 @@ def get_defender_metric_data(
                 params["nextToken"] = next_token
             
             # Get metric data
+            logger.debug(f"Calling list_metric_values with params: {params}")
             result = iot_client.list_metric_values(**params)
             next_token = result.get("nextToken")
+            
+            # Log the raw response for debugging
+            logger.debug(f"Raw metric data response: {result}")
+            
+            # Check if we got any data
+            if not result.get("metricDatumList"):
+                logger.info(f"No metric data found for {thing_name}, metric: {metric_name}")
+            else:
+                logger.info(f"Found {len(result.get('metricDatumList', []))} data points for {thing_name}, metric: {metric_name}")
             
             # Process results
             for datum in result.get("metricDatumList", []):
                 timestamp = datum.get("timestamp")
-                value = datum.get("value", {}).get("count", 0)
+                value_obj = datum.get("value", {})
+                
+                # Extract the appropriate value based on metric type
+                if metric_type == "DISCONNECT_DURATION":
+                    # Disconnect duration uses seconds
+                    value = value_obj.get("seconds", 0)
+                else:
+                    # Other metrics use count
+                    value = value_obj.get("count", 0)
+                
+                logger.debug(f"Processing datum: timestamp={timestamp}, value_obj={value_obj}, extracted_value={value}")
                 
                 if timestamp:
                     results.append({
                         "metric": metric_name,
-                        "timestamp": timestamp.isoformat(),
-                        "value": value
+                        "timestamp": timestamp.isoformat().replace('+00:00', 'Z'),  # Format as AWSDateTime
+                        "value": float(value)  # Ensure value is a Float
                     })
             
             if not next_token:
                 break
     
+    except iot_client.exceptions.ResourceNotFoundException:
+        logger.warning(f"Thing {thing_name} not found")
+        return []
+    except iot_client.exceptions.InvalidRequestException as e:
+        logger.warning(f"Invalid request for defender metrics: {str(e)}")
+        return []
     except Exception as e:
         logger.error(f"Error getting defender metrics: {str(e)}")
-        raise
+        # Return empty list instead of raising exception for better UX
+        return []
     
     logger.debug("Got defender metrics", extra={"thing_name": thing_name, "type": metric_type, "count": len(results)})
     return results
@@ -136,15 +163,21 @@ def handler(event: Dict[str, Any], context: LambdaContext) -> Dict[str, Any]:
         # Get defender metric data
         data = get_defender_metric_data(thing_name, metric_type, start_time, end_time)
         
-        # Return successful response
-        return create_response(data)
+        # Ensure we always return a list (even if empty)
+        if not isinstance(data, list):
+            logger.warning(f"Expected list but got {type(data)}, converting to empty list")
+            data = []
+        
+        # Return the data directly (not wrapped in create_response for AppSync direct resolvers)
+        return data
     
     except Exception as error:
         # Log the error
         logger.exception("Resolver execution failed")
         
-        # Return error response
-        return create_error_response(error)
+        # For AppSync direct resolvers, we need to raise the exception
+        # rather than return an error response
+        raise error
 
 # Entry point for AWS Lambda
 lambda_handler = handler

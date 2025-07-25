@@ -38,21 +38,12 @@ export class CloudWatchMetricsConstruct extends Construct {
       }
     );
 
-    // Add CloudWatch permissions with namespace restrictions
+    // Add CloudWatch permissions without namespace restrictions
     getCloudwatchMetricDataLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
         actions: ['cloudwatch:GetMetricData'],
-        resources: ['*'],
-        conditions: {
-          StringLike: {
-            'cloudwatch:namespace': [
-              'AWS/IoT*',
-              'FleetWatch/*',
-              'AWS/Lambda',
-              'AWS/AppSync'
-            ]
-          }
-        }
+        resources: ['*']
+        // Removed the condition that was causing the AccessDenied error
       })
     );
 

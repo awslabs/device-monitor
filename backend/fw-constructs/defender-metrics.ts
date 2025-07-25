@@ -13,81 +13,77 @@
  * permissions and limitations under the License.
  */
 
-import * as path from 'path';
-import * as IAM from 'aws-cdk-lib/aws-iam';
-import { Duration } from 'aws-cdk-lib/core';
-import { defaultAppSyncResponseMapping, type FWConstructProps } from './types';
 import { Construct } from 'constructs';
-import * as Lambda from 'aws-cdk-lib/aws-lambda';
-import * as AppSync from 'aws-cdk-lib/aws-appsync';
+import * as appsync from 'aws-cdk-lib/aws-appsync';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as path from 'path';
+import { Duration } from 'aws-cdk-lib';
+
+export interface DefenderMetricsConstructProps {
+  api: appsync.GraphqlApi;
+  region: string;
+  accountId: string;
+  pythonLayer: lambda.LayerVersion;
+}
 
 export class DefenderMetricsConstruct extends Construct {
-  constructor(scope: Construct, id: string, props: FWConstructProps) {
+  constructor(scope: Construct, id: string, props: DefenderMetricsConstructProps) {
     super(scope, id);
-    const api: AppSync.GraphqlApi = props.api;
 
-    // Create IAM role for Lambda execution
-    const getDefenderMetricDataRole: IAM.Role = new IAM.Role(
-      this,
-      'DeviceDetailsLambdaRole',
-      {
-        assumedBy: new IAM.ServicePrincipal('lambda.amazonaws.com'),
-        managedPolicies: [
-          IAM.ManagedPolicy.fromAwsManagedPolicyName(
-            'service-role/AWSLambdaBasicExecutionRole'
-          )
-        ]
-      }
-    );
+    // Create Lambda role for Defender metrics
+    const defenderLambdaRole = new iam.Role(this, 'DeviceDetailsLambdaRole', {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole')
+      ]
+    });
 
-    // Add IoT permissions
-    getDefenderMetricDataRole.addToPolicy(
-      new IAM.PolicyStatement({
-        effect: IAM.Effect.ALLOW,
-        actions: ['iot:ListMetricValues'],
-        resources: [`arn:aws:iot:${props.region}:${props.accountId}:thing/*`]
+    // Add permissions for IoT Device Defender
+    defenderLambdaRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: [
+          'iot:GetBehaviorModelTrainingSummaries',
+          'iot:ListActiveViolations',
+          'iot:ListDetectMitigationActionsExecutions',
+          'iot:ListDetectMitigationActionsTasks',
+          'iot:ListSecurityProfiles',
+          'iot:ListSecurityProfilesForTarget',
+          'iot:ListTargetsForSecurityProfile',
+          'iot:ListViolationEvents',
+          'iot:DescribeSecurityProfile',
+          'iot:GetStatistics',
+          'iot:ListMetricValues'
+        ],
+        resources: ['*']
       })
     );
 
-    // Create the Python Lambda function
-    const getDefenderMetricDataFunction: Lambda.Function = new Lambda.Function(
-      this,
-      'getDefenderMetricDataFunction',
-      {
-        runtime: Lambda.Runtime.PYTHON_3_12,
-        code: Lambda.Code.fromAsset(
-          path.join(
-            import.meta.dirname,
-            '../appsync/lambda-functions/python/get_defender_metric_data'
-          )
-        ),
-        handler: 'handler.lambda_handler',
-        layers: props.pythonLayer ? [props.pythonLayer] : [],
-        role: getDefenderMetricDataRole,
-        timeout: Duration.seconds(30),
-        environment: {
-          PYTHONPATH: '/var/task:/opt/python'
-        }
+    // Create Lambda function for getting Defender metric data
+    const getDefenderMetricDataFunction = new lambda.Function(this, 'getDefenderMetricDataFunction', {
+      runtime: lambda.Runtime.PYTHON_3_12,
+      handler: 'handler.lambda_handler',
+      code: lambda.Code.fromAsset(
+        path.join(import.meta.dirname, '../appsync/lambda-functions/python/get_defender_metric_data')
+      ),
+      layers: [props.pythonLayer],
+      role: defenderLambdaRole,
+      timeout: Duration.seconds(30),
+      environment: {
+        REGION: props.region
       }
+    });
+
+    // Create AppSync data source
+    const getDefenderMetricDataDataSource = props.api.addLambdaDataSource(
+      'GetDefenderMetricDataDataSource',
+      getDefenderMetricDataFunction
     );
 
-    // Create the AppSync data source
-    const getDefenderMetricDataDataSource: AppSync.LambdaDataSource =
-      api.addLambdaDataSource(
-        'GetDefenderMetricDataDataSource',
-        getDefenderMetricDataFunction
-      );
-
-    // Create the resolver
-    getDefenderMetricDataDataSource.createResolver(
-      'GetDefenderMetricDataResolver',
-      {
-        typeName: 'Query',
-        fieldName: 'getDefenderMetricData',
-        responseMappingTemplate: AppSync.MappingTemplate.fromString(
-          defaultAppSyncResponseMapping
-        )
-      }
-    );
+    // Create resolver for getDefenderMetricData
+    getDefenderMetricDataDataSource.createResolver('GetDefenderMetricDataResolver', {
+      typeName: 'Query',
+      fieldName: 'getDefenderMetricData'
+    });
   }
 }

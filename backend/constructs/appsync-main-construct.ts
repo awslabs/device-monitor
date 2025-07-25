@@ -29,6 +29,7 @@ import { DeviceConstruct } from '../fw-constructs/device';
 import { UserPreferenceConstruct } from '../fw-constructs/user-preferences';
 import ThingGroupsConstruct from '../fw-constructs/thing-groups';
 import ThingCountConstruct from '../fw-constructs/thing-count';
+import { DeviceDefenderProfileConstruct } from '../fw-constructs/device-defender-profile';
 import * as Lambda from 'aws-cdk-lib/aws-lambda';
 import * as path from 'path';
 import * as cdk from 'aws-cdk-lib';
@@ -91,6 +92,16 @@ export class AppSyncBackendConstruct extends Construct {
     const userPreferencesTable: UserPreferenceTable = new UserPreferenceTable(
       this,
       'UserPreferencesTable'
+    );
+
+    // Create Device Defender Security Profile
+    const defenderProfile: DeviceDefenderProfileConstruct = new DeviceDefenderProfileConstruct(
+      this,
+      'DeviceDefenderProfile',
+      {
+        region: props.region,
+        accountId: props.accountId
+      }
     );
 
     // Device Stats - now includes both table and monitor
