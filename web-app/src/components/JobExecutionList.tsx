@@ -275,9 +275,9 @@ export const JobExecutionList: FunctionComponent<JobExecutionListProps> = (
         >
       >({
         query:
-          listKey === 'jobId'
-            ? ListJobExecutionsForThingDocument
-            : ListJobExecutionsForJobDocument,
+          'jobId' in props
+            ? ListJobExecutionsForJobDocument
+            : ListJobExecutionsForThingDocument,
         variables: {
           ...props,
           limit: nextToken ? null : preferences.pageSize || null,

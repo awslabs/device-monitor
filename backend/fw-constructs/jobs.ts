@@ -38,9 +38,16 @@ export class JobsConstruct extends Construct {
         ]
       }
     );
+    // ListJobs requires * resource, DescribeJob requires specific job resource
     listJobsLambdaRole.addToPolicy(
       new IAM.PolicyStatement({
-        actions: ['iot:ListJobs', 'iot:DescribeJob'],
+        actions: ['iot:ListJobs'],
+        resources: ['*']
+      })
+    );
+    listJobsLambdaRole.addToPolicy(
+      new IAM.PolicyStatement({
+        actions: ['iot:DescribeJob'],
         resources: [`arn:aws:iot:${props.region}:${props.accountId}:job/*`]
       })
     );
