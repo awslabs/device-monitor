@@ -16,8 +16,8 @@
 
 # AWS IoT Core Configuration
 aws:
-  endpoint: "a3o0cryk7wgci0-ats.iot.us-west-2.amazonaws.com"
-  region: "us-west-2"
+  endpoint: "xxxxxxxxxxxxxxx.amazonaws.com"
+  region: "xxxxxxxx"
 
 # Device Simulation Configuration
 simulation:
