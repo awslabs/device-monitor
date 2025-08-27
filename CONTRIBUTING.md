@@ -56,4 +56,8 @@ If you discover a potential security issue in this project we ask that you notif
 
 ## Licensing
 
+<<<<<<< HEAD
 See the [LICENSE](LICENSE) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
+=======
+See the [LICENSE](LICENSE) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
+>>>>>>> ca6370e (added code of conduct, contributing, and license files)
