@@ -186,11 +186,11 @@ type Filter = {
 
 The system uses AWS IoT services to manage devices:
 
-1. **AWS IoT Core** for device connectivity and management
-2. **AWS IoT Device Shadow** for state management
-3. **AWS IoT Fleet Indexing** for device search and filtering
+1. **AWS IoT Core** for device connectivity and messaging
+2. **AWS IoT Core Device Shadow** for state management
+3. **AWS IoT Device Management** for device search, filtering and jobs(remote actions) status monitoring
 4. **AWS IoT Device Defender** for security monitoring
-5. **AWS CloudWatch** for operational metrics
+6. **AWS CloudWatch** for operational metrics
 
 Device data is accessed through AWS AppSync GraphQL API, with Lambda resolvers that interact with the AWS IoT services.
 
