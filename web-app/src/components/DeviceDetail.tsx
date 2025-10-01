@@ -141,11 +141,14 @@ export const DeviceDetail: FunctionComponent<DeviceDetailProps> = ({
   }, [thingName]);
 
   // Add debug logging for connection status
-  useEffect(() => {
+  useEffect((): void => {
     if (deviceData) {
       console.log('DeviceDetail - Device Data:', deviceData);
       console.log('DeviceDetail - Connection Status:', deviceData.connected);
-      console.log('DeviceDetail - Connection Status Type:', typeof deviceData.connected);
+      console.log(
+        'DeviceDetail - Connection Status Type:',
+        typeof deviceData.connected
+      );
     }
   }, [deviceData]);
 
@@ -191,13 +194,17 @@ export const DeviceDetail: FunctionComponent<DeviceDetailProps> = ({
                     let formattedValue: ReactElement | string =
                       (value as string) || '-';
                     switch (key) {
-                      case 'connected':
+                      case 'connected': {
                         // Handle connection status explicitly
                         // Convert to boolean and log for debugging
-                        const rawValue = value;
-                        const isConnected = rawValue === true || rawValue === 'true';
-                        console.log(`DeviceDetail - Raw connection value: ${rawValue}, type: ${typeof rawValue}, isConnected: ${isConnected}`);
-                        
+                        const rawValue: unknown = value;
+                        const isConnected: boolean =
+                          rawValue === true ||
+                          (typeof rawValue === 'string' && rawValue === 'true');
+                        console.log(
+                          `DeviceDetail - Raw connection value: ${String(rawValue)}, type: ${typeof rawValue}, isConnected: ${isConnected}`
+                        );
+
                         formattedValue = (
                           <StatusIndicator
                             type={isConnected ? 'success' : 'error'}
@@ -206,6 +213,7 @@ export const DeviceDetail: FunctionComponent<DeviceDetailProps> = ({
                           </StatusIndicator>
                         );
                         break;
+                      }
                       case 'lastConnectedAt':
                         formattedValue = value
                           ? new Date(value as string).toLocaleString()

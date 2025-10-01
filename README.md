@@ -20,7 +20,7 @@ under the License.
 
 # FleetWatch - IoT Fleet Management System
 
-FleetWatch is a comprehensive IoT device fleet management system built on AWS cloud services. It enables monitoring, management, and analysis of connected devices at scale. **FleetWatch serves as a complete replacement for AWS IoT FleetHub services, which will be discontinued starting October 2025.**
+FleetWatch is a comprehensive IoT device fleet management system built on AWS cloud services. It enables monitoring, management, and analysis of connected devices at scale. **FleetWatch serves as sample customizable solution to help customers get started when AWS IoT FleetHub service will be discontinued starting October 2025.**. This is only sample code and it is not supposed to be used in production environments.
 
 ## Features
 
@@ -42,7 +42,7 @@ The architecture diagram above illustrates the main components of the FleetWatch
 
 ## FleetHub Replacement
 
-As AWS IoT FleetHub will be discontinued starting October 2025, FleetWatch provides a comprehensive replacement with several enhanced capabilities:
+As AWS IoT FleetHub will be discontinued starting October 2025, FleetWatch provides a sample customizable (non-production) replacement with several enhanced capabilities:
 
 - **Superior Filtering**: Advanced filtering capabilities including date-time ranges, which FleetHub lacked
 - **User Preferences**: Ability to save and retrieve user view preferences, including favorite devices and filters

@@ -199,15 +199,37 @@ export class CloudFrontS3WebSiteConstruct extends Construct {
           allowedMethods: CloudFront.AllowedMethods.ALLOW_ALL,
           viewerProtocolPolicy: CloudFront.ViewerProtocolPolicy.HTTPS_ONLY
         },
+        additionalBehaviors: {
+          '*.json': {
+            origin: s3origin,
+            cachePolicy: CloudFront.CachePolicy.CACHING_DISABLED,
+            viewerProtocolPolicy: CloudFront.ViewerProtocolPolicy.HTTPS_ONLY,
+            allowedMethods: CloudFront.AllowedMethods.ALLOW_GET_HEAD
+          },
+          '*.js': {
+            origin: s3origin,
+            cachePolicy: new CloudFront.CachePolicy(this, 'JSCachePolicy', {
+              defaultTtl: Duration.days(30),
+              maxTtl: Duration.days(365),
+              minTtl: Duration.seconds(0)
+            }),
+            viewerProtocolPolicy: CloudFront.ViewerProtocolPolicy.HTTPS_ONLY,
+            allowedMethods: CloudFront.AllowedMethods.ALLOW_GET_HEAD
+          },
+          '*.css': {
+            origin: s3origin,
+            cachePolicy: new CloudFront.CachePolicy(this, 'CSSCachePolicy', {
+              defaultTtl: Duration.days(30),
+              maxTtl: Duration.days(365),
+              minTtl: Duration.seconds(0)
+            }),
+            viewerProtocolPolicy: CloudFront.ViewerProtocolPolicy.HTTPS_ONLY,
+            allowedMethods: CloudFront.AllowedMethods.ALLOW_GET_HEAD
+          }
+        },
         errorResponses: [
           {
             httpStatus: 404,
-            ttl: Duration.hours(0),
-            responseHttpStatus: 200,
-            responsePagePath: '/index.html'
-          },
-          {
-            httpStatus: 403,
             ttl: Duration.hours(0),
             responseHttpStatus: 200,
             responsePagePath: '/index.html'
@@ -218,16 +240,7 @@ export class CloudFrontS3WebSiteConstruct extends Construct {
         minimumProtocolVersion: CloudFront.SecurityPolicyProtocol.TLS_V1_2_2021,
         enableLogging: true,
         logBucket: cloudFrontLogsBucket,
-        logFilePrefix: 'cloudfront-access-logs/',
-        geoRestriction: CloudFront.GeoRestriction.allowlist(
-          'US',
-          'CA',
-          'GB',
-          'DE',
-          'FR',
-          'JP',
-          'AU'
-        ) // Add geo restrictions for security
+        logFilePrefix: 'cloudfront-access-logs/'
       });
 
     const webappConfig: SharedConfig = {

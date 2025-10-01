@@ -29,19 +29,26 @@ export class DeviceDefenderProfileConstruct extends Construct {
   public readonly securityProfileName: string;
   public readonly securityProfileArn: string;
 
-  constructor(scope: Construct, id: string, props: DeviceDefenderProfileConstructProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: DeviceDefenderProfileConstructProps
+  ) {
     super(scope, id);
 
     this.securityProfileName = 'FleetWatchSecurityProfile';
     this.securityProfileArn = `arn:aws:iot:${props.region}:${props.accountId}:securityprofile/${this.securityProfileName}`;
 
     // Create custom resource provider
-    const provider = new cr.Provider(this, 'DefenderProfileProvider', {
-      onEventHandler: new lambda.Function(this, 'DefenderProfileHandler', {
-        runtime: lambda.Runtime.PYTHON_3_12,
-        handler: 'index.on_event',
-        timeout: Duration.minutes(5),
-        code: lambda.Code.fromInline(`
+    const provider: cr.Provider = new cr.Provider(
+      this,
+      'DefenderProfileProvider',
+      {
+        onEventHandler: new lambda.Function(this, 'DefenderProfileHandler', {
+          runtime: lambda.Runtime.PYTHON_3_12,
+          handler: 'index.on_event',
+          timeout: Duration.minutes(5),
+          code: lambda.Code.fromInline(`
 import json
 import boto3
 import logging
@@ -208,37 +215,42 @@ def delete_security_profile(iot_client, security_profile_name, all_things_arn):
         'PhysicalResourceId': f"security-profile-{security_profile_name}"
     }
 `),
-        initialPolicy: [
-          new iam.PolicyStatement({
-            effect: iam.Effect.ALLOW,
-            actions: [
-              'iot:CreateSecurityProfile',
-              'iot:UpdateSecurityProfile',
-              'iot:DeleteSecurityProfile',
-              'iot:DescribeSecurityProfile',
-              'iot:AttachSecurityProfile',
-              'iot:DetachSecurityProfile',
-              'iot:ListTargetsForSecurityProfile',
-              'iot:ListSecurityProfiles',
-              'iot:TagResource',
-              'iot:UntagResource'
-            ],
-            resources: ['*']
-          })
-        ]
-      }),
-      logRetention: logs.RetentionDays.ONE_WEEK
-    });
+          initialPolicy: [
+            new iam.PolicyStatement({
+              effect: iam.Effect.ALLOW,
+              actions: [
+                'iot:CreateSecurityProfile',
+                'iot:UpdateSecurityProfile',
+                'iot:DeleteSecurityProfile',
+                'iot:DescribeSecurityProfile',
+                'iot:AttachSecurityProfile',
+                'iot:DetachSecurityProfile',
+                'iot:ListTargetsForSecurityProfile',
+                'iot:ListSecurityProfiles',
+                'iot:TagResource',
+                'iot:UntagResource'
+              ],
+              resources: ['*']
+            })
+          ]
+        }),
+        logRetention: logs.RetentionDays.ONE_WEEK
+      }
+    );
 
     // Create the custom resource
-    const customResource = new CustomResource(this, 'DefenderProfileResource', {
-      serviceToken: provider.serviceToken,
-      properties: {
-        SecurityProfileName: this.securityProfileName,
-        AccountId: props.accountId,
-        Region: props.region
+    const customResource: CustomResource = new CustomResource(
+      this,
+      'DefenderProfileResource',
+      {
+        serviceToken: provider.serviceToken,
+        properties: {
+          SecurityProfileName: this.securityProfileName,
+          AccountId: props.accountId,
+          Region: props.region
+        }
       }
-    });
+    );
 
     // Add outputs
     this.securityProfileArn = customResource.getAttString('SecurityProfileArn');

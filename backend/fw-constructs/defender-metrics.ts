@@ -18,7 +18,7 @@
  */
 
 import { Construct } from 'constructs';
-import * as appsync from 'aws-cdk-lib/aws-appsync';
+import type * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as path from 'path';
@@ -32,16 +32,26 @@ export interface DefenderMetricsConstructProps {
 }
 
 export class DefenderMetricsConstruct extends Construct {
-  constructor(scope: Construct, id: string, props: DefenderMetricsConstructProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: DefenderMetricsConstructProps
+  ) {
     super(scope, id);
 
     // Create Lambda role for Defender metrics
-    const defenderLambdaRole = new iam.Role(this, 'DeviceDetailsLambdaRole', {
-      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
-      managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSLambdaBasicExecutionRole')
-      ]
-    });
+    const defenderLambdaRole: iam.Role = new iam.Role(
+      this,
+      'DeviceDetailsLambdaRole',
+      {
+        assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+        managedPolicies: [
+          iam.ManagedPolicy.fromAwsManagedPolicyName(
+            'service-role/AWSLambdaBasicExecutionRole'
+          )
+        ]
+      }
+    );
 
     // Add permissions for IoT Device Defender
     defenderLambdaRole.addToPolicy(
@@ -64,30 +74,41 @@ export class DefenderMetricsConstruct extends Construct {
     );
 
     // Create Lambda function for getting Defender metric data
-    const getDefenderMetricDataFunction = new lambda.Function(this, 'getDefenderMetricDataFunction', {
-      runtime: lambda.Runtime.PYTHON_3_12,
-      handler: 'handler.lambda_handler',
-      code: lambda.Code.fromAsset(
-        path.join(import.meta.dirname, '../appsync/lambda-functions/python/get_defender_metric_data')
-      ),
-      layers: [props.pythonLayer],
-      role: defenderLambdaRole,
-      timeout: Duration.seconds(30),
-      environment: {
-        REGION: props.region
+    const getDefenderMetricDataFunction: lambda.Function = new lambda.Function(
+      this,
+      'getDefenderMetricDataFunction',
+      {
+        runtime: lambda.Runtime.PYTHON_3_12,
+        handler: 'handler.lambda_handler',
+        code: lambda.Code.fromAsset(
+          path.join(
+            import.meta.dirname,
+            '../appsync/lambda-functions/python/get_defender_metric_data'
+          )
+        ),
+        layers: [props.pythonLayer],
+        role: defenderLambdaRole,
+        timeout: Duration.seconds(30),
+        environment: {
+          REGION: props.region
+        }
       }
-    });
-
-    // Create AppSync data source
-    const getDefenderMetricDataDataSource = props.api.addLambdaDataSource(
-      'GetDefenderMetricDataDataSource',
-      getDefenderMetricDataFunction
     );
 
+    // Create AppSync data source
+    const getDefenderMetricDataDataSource: appsync.LambdaDataSource =
+      props.api.addLambdaDataSource(
+        'GetDefenderMetricDataDataSource',
+        getDefenderMetricDataFunction
+      );
+
     // Create resolver for getDefenderMetricData
-    getDefenderMetricDataDataSource.createResolver('GetDefenderMetricDataResolver', {
-      typeName: 'Query',
-      fieldName: 'getDefenderMetricData'
-    });
+    getDefenderMetricDataDataSource.createResolver(
+      'GetDefenderMetricDataResolver',
+      {
+        typeName: 'Query',
+        fieldName: 'getDefenderMetricData'
+      }
+    );
   }
 }

@@ -99,14 +99,10 @@ export class AppSyncBackendConstruct extends Construct {
     );
 
     // Create Device Defender Security Profile
-    const defenderProfile: DeviceDefenderProfileConstruct = new DeviceDefenderProfileConstruct(
-      this,
-      'DeviceDefenderProfile',
-      {
-        region: props.region,
-        accountId: props.accountId
-      }
-    );
+    new DeviceDefenderProfileConstruct(this, 'DeviceDefenderProfile', {
+      region: props.region,
+      accountId: props.accountId
+    });
 
     // Device Stats - now includes both table and monitor
     new DeviceStatsConstruct(this, 'DeviceStatsDS', {

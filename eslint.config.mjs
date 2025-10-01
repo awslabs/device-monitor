@@ -14,6 +14,7 @@ export default tseslint.config(
       '**/build/**',
       '**/cdk.out/**',
       '**/.venv/**',
+      '**/venv/**', // Exclude Python virtual environments
       'video-generation/**' // Exclude video-generation from linting
     ]
   },

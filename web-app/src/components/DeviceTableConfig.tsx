@@ -132,10 +132,14 @@ export function getDeviceTableColumns(
       cell: (item: ThingSummary): ReactElement => {
         // Handle connection status explicitly
         // Convert to boolean and log for debugging
-        const rawValue = item.connected;
-        const isConnected = rawValue === true || rawValue === 'true';
-        console.log(`DeviceList - Item ${item.thingName} - Raw connection value: ${rawValue}, type: ${typeof rawValue}, isConnected: ${isConnected}`);
-        
+        const rawValue: boolean = item.connected;
+        // Handle potential type inconsistency between API and schema
+        const isConnected: boolean =
+          rawValue || (typeof rawValue === 'string' && rawValue === 'true');
+        console.log(
+          `DeviceList - Item ${item.thingName} - Raw connection value: ${rawValue}, type: ${typeof rawValue}, isConnected: ${isConnected}`
+        );
+
         return (
           <StatusIndicator type={isConnected ? 'success' : 'error'}>
             {isConnected ? 'Connected' : 'Disconnected'}
