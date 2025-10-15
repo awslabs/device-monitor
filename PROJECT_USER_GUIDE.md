@@ -1,8 +1,8 @@
-# FleetWatch - Project User Guide
+# Device Monitor - Project User Guide
 
 ## Overview
 
-FleetWatch is a comprehensive IoT device fleet management system built on AWS cloud services that serves as a complete replacement for AWS IoT FleetHub services (discontinued October 2025). This guide provides detailed instructions for understanding, deploying, and using the FleetWatch system.
+Device Monitor is a comprehensive IoT device fleet management system built on AWS cloud services that serves as a example for the replacement for AWS IoT FleetHub services (discontinued October 2025). This guide provides detailed instructions for understanding, deploying, and using the Device Monitor system.
 
 ## Table of Contents
 
@@ -22,9 +22,9 @@ FleetWatch is a comprehensive IoT device fleet management system built on AWS cl
 
 ## Project Description
 
-### What is FleetWatch?
+### What is Device Monitor?
 
-FleetWatch is a modern, serverless IoT fleet management platform that provides:
+Device Monitor is a modern, serverless IoT fleet management platform that provides:
 
 - **Near Real-time Device Monitoring**: Track connection status, metrics, and health of IoT devices at scale
 - **Advanced Device Management**: Manage device state through AWS IoT Device Shadows
@@ -35,9 +35,9 @@ FleetWatch is a modern, serverless IoT fleet management platform that provides:
 - **Analytics & Insights**: Comprehensive fleet statistics and visualization
 - **Device Simulation**: Built-in tools for testing and development
 
-### Why FleetWatch?
+### Why Device Monitor?
 
-As AWS IoT FleetHub reaches end-of-life in October 2025, FleetWatch provides a superior replacement with enhanced capabilities:
+As AWS IoT FleetHub reaches end-of-life in October 2025, Device Monitor provides an example replacement with enhanced capabilities:
 
 - **Enhanced Filtering**: Advanced filtering with date-time ranges (missing in FleetHub)
 - **User Preferences**: Save and retrieve personalized view settings
@@ -48,7 +48,7 @@ As AWS IoT FleetHub reaches end-of-life in October 2025, FleetWatch provides a s
 
 ## Architecture
 
-FleetWatch uses a modern serverless architecture leveraging AWS managed services:
+Device Monitor uses a modern serverless architecture leveraging AWS managed services:
 
 ### Core Components
 
@@ -63,11 +63,11 @@ FleetWatch uses a modern serverless architecture leveraging AWS managed services
 ### Project Structure
 
 ```
-fleetWatch/
+Device Monitor/
 ├── backend/                 # AWS CDK infrastructure and backend services
 │   ├── appsync/            # GraphQL API definitions and resolvers
 │   ├── constructs/         # Reusable CDK constructs
-│   ├── fw-constructs/      # FleetWatch-specific constructs
+│   ├── fw-constructs/      # Device Monitor-specific constructs
 │   └── config/             # Configuration files
 ├── web-app/                # React web application
 │   ├── src/
@@ -112,8 +112,8 @@ Before getting started, ensure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd fleetWatch
+git clone https://github.com/awslabs/device-monitor
+cd device-monitor
 ```
 
 ### 2. Install Dependencies
@@ -141,14 +141,14 @@ The project uses environment-specific configurations. Default settings work for 
 
 ```bash
 # Optional: Set custom stack name
-export STACK_NAME="my-fleetwatch-stack"
+export STACK_NAME="my-Device Monitor-stack"
 ```
 
 ## Deployment
 
 ### Quick Deployment
 
-Deploy the entire FleetWatch system with a single command:
+Deploy the entire Device Monitor system with a single command:
 
 ```bash
 npm run deploy
@@ -190,7 +190,7 @@ After successful deployment, you'll see outputs including:
 Deploy with a custom stack name:
 
 ```bash
-STACK_NAME="production-fleetwatch" npm run deploy
+STACK_NAME="device-monitor" npm run deploy
 ```
 
 ## Usage
@@ -288,7 +288,7 @@ The project enforces code quality through:
 
 ## Device Simulation
 
-FleetWatch includes a comprehensive device simulator for testing and development.
+Device Monitor includes a comprehensive device simulator for testing and development.
 
 ### Setting Up the Simulator
 
@@ -352,7 +352,7 @@ python cleanup.py
 
 ### GraphQL API
 
-FleetWatch uses GraphQL for all API interactions. The API provides:
+Device Monitor uses GraphQL for all API interactions. The API provides:
 
 #### Queries
 
@@ -443,7 +443,7 @@ Enable debug logging:
 
 ```bash
 # Backend debugging
-export DEBUG=fleetwatch:*
+export DEBUG=Device Monitor:*
 
 # Frontend debugging
 export REACT_APP_DEBUG=true
@@ -527,4 +527,4 @@ For questions and support:
 
 ---
 
-*This guide is maintained by the FleetWatch development team. Last updated: July 2025*
+*This guide is maintained by the Device Monitor development team. Last updated: July 2025*

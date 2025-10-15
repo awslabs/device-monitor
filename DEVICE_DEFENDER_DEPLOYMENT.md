@@ -1,10 +1,10 @@
 # Device Defender Profile Deployment Guide
 
-This guide explains how to automatically create and configure AWS IoT Device Defender security profiles during FleetWatch deployment.
+This guide explains how to automatically create and configure AWS IoT Device Defender security profiles during Device Monitor deployment.
 
 ## Overview
 
-AWS IoT Device Defender provides security monitoring for IoT devices by tracking device behavior and generating metrics. FleetWatch automatically creates a security profile during deployment to enable Device Defender metrics collection.
+AWS IoT Device Defender provides security monitoring for IoT devices by tracking device behavior and generating metrics. Device Monitor automatically creates a security profile during deployment to enable Device Defender metrics collection.
 
 ## Implementation
 
@@ -88,11 +88,11 @@ When you run `npm run deploy`, the security profile is automatically:
 ### 2. Verification
 After deployment, verify the profile exists:
 ```bash
-aws iot describe-security-profile --security-profile-name FleetWatchSecurityProfile --region us-west-2
+aws iot describe-security-profile --security-profile-name Device MonitorSecurityProfile --region us-west-2
 ```
 
 ### 3. Metrics Collection
-Device Defender metrics will begin appearing in the FleetWatch UI within 5-15 minutes after:
+Device Defender metrics will begin appearing in the Device Monitor UI within 5-15 minutes after:
 - The security profile is attached
 - Devices are active and generating events
 - AWS processes and aggregates the metrics
@@ -169,12 +169,12 @@ If Device Defender metrics don't appear:
 
 #### Check Security Profile Status
 ```bash
-aws iot describe-security-profile --security-profile-name FleetWatchSecurityProfile --region us-west-2
+aws iot describe-security-profile --security-profile-name Device MonitorSecurityProfile --region us-west-2
 ```
 
 #### List Attached Targets
 ```bash
-aws iot list-targets-for-security-profile --security-profile-name FleetWatchSecurityProfile --region us-west-2
+aws iot list-targets-for-security-profile --security-profile-name Device MonitorSecurityProfile --region us-west-2
 ```
 
 #### View CloudWatch Logs
@@ -183,7 +183,7 @@ Check the Lambda function logs in CloudWatch for any errors during profile creat
 ## Benefits of Deployment-Time Creation
 
 ### 1. Consistency
-- Every FleetWatch deployment includes Device Defender monitoring
+- Every Device Monitor deployment includes Device Defender monitoring
 - No manual configuration required
 - Consistent security posture across environments
 
@@ -236,6 +236,6 @@ Consider integrating Device Defender violations with your alerting system for pr
 
 ## Conclusion
 
-Deploying Device Defender profiles as part of your infrastructure ensures consistent, automated security monitoring for your IoT fleet. The FleetWatch implementation provides a robust foundation that can be customized for your specific security requirements.
+Deploying Device Defender profiles as part of your infrastructure ensures consistent, automated security monitoring for your IoT fleet. The Device Monitor implementation provides a robust foundation that can be customized for your specific security requirements.
 
 For questions or issues, refer to the AWS IoT Device Defender documentation or check the CloudWatch logs for the custom resource Lambda function.

@@ -21,5 +21,5 @@ under the License.
 Shared library for Python Lambda functions.
 
 This package provides common utilities and helper functions for AWS Lambda functions
-used in FleetWatch AppSync resolvers.
+used in Device Monitor AppSync resolvers.
 """

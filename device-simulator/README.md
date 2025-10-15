@@ -1,6 +1,6 @@
-# FleetWatch Device Simulator
+# Device Monitor Device Simulator
 
-This device simulator creates and manages virtual IoT devices that connect to AWS IoT Core and simulate real-world device behavior. The simulator is designed to work with the FleetWatch application, generating devices with the appropriate structure, attributes, and behaviors.
+This device simulator creates and manages virtual IoT devices that connect to AWS IoT Core and simulate real-world device behavior. The simulator is designed to work with the Device Monitor application, generating devices with the appropriate structure, attributes, and behaviors.
 
 ## Features
 
@@ -87,17 +87,17 @@ The simulator is configured using the `dev-config.yaml` file, which includes:
    python main.py --config custom-config.yaml
    ```
 
-## Integration with FleetWatch
+## Integration with Device Monitor
 
-This simulator is specifically designed to work with the FleetWatch application. It generates devices with the exact structure and attributes expected by FleetWatch, including:
+This simulator is specifically designed to work with the Device Monitor application. It generates devices with the exact structure and attributes expected by Device Monitor, including:
 
 - Proper thing attributes for filtering and searching
 - Correct shadow structure for state management
 - Retained topics in the expected format
-- Firmware types that match FleetWatch expectations
-- Brand names from the FleetWatch enumeration
+- Firmware types that match Device Monitor expectations
+- Brand names from the Device Monitor enumeration
 
-The simulator helps test and develop the FleetWatch application by providing realistic device data and behavior.
+The simulator helps test and develop the Device Monitor application by providing realistic device data and behavior.
 
 ## Cleanup
 

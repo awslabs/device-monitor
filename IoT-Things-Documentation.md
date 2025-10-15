@@ -1,6 +1,6 @@
-# FleetWatch IoT Things Documentation
+# Device Monitor IoT Things Documentation
 
-This document provides comprehensive details about IoT things (devices) in the FleetWatch system, including their attributes, shadows, metadata, and related functionality.
+This document provides comprehensive details about IoT things (devices) in the Device Monitor system, including their attributes, shadows, metadata, and related functionality.
 
 ## Device Data Structure
 

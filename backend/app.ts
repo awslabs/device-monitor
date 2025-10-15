@@ -28,7 +28,7 @@ import { CfWafStack } from './cf-waf-stack';
 const gitContext: GitContext = getConfigProvider('git')();
 const app: App = new App();
 
-const stackName: string = `FleetWatch-${app.node.tryGetContext('stack_name') || gitContext.appStackName}`;
+const stackName: string = `device-monitor-${app.node.tryGetContext('stack_name') || gitContext.appStackName}`;
 
 // Comment out to force stack name
 if (!process.env.GITHUB_ACTIONS && stackName === 'main') {

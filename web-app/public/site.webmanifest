@@ -1,6 +1,6 @@
 {
-  "name": "PACE | FleetWatch",
-  "short_name": "FleetWatch",
+  "name": "PACE | Device Monitor",
+  "short_name": "Device Monitor",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

@@ -100,13 +100,13 @@ function Layout(): ReactElement {
       <div id="header-wrapper">
         <img
           src={SuperGraphic}
-          alt="FleetWatch Supergraphic"
+          alt="Device Monitor Supergraphic"
           id="supergraphic"
         />
         <TopNavigation
           identity={{
             href: '/',
-            title: 'FleetWatch',
+            title: 'Device Monitor',
             onFollow: (event: CustomEvent<object>): void =>
               handleFollow(event, '/')
           }}
@@ -171,7 +171,7 @@ function Layout(): ReactElement {
             <div className="side-menu-logo-container">
               <img
                 src={prototypingLogo}
-                alt="FleetWatch Logo"
+                alt="Device Monitor Logo"
                 className="side-menu-logo"
               />
             </div>
@@ -202,7 +202,7 @@ function Layout(): ReactElement {
 function App(): ReactElement {
   // Create a custom theme with transparent backgrounds
   const amplifyTheme: Theme = {
-    name: 'fleetWatchTheme',
+    name: 'Device MonitorTheme',
     overrides: [
       {
         colorMode: 'light',
@@ -231,7 +231,7 @@ function App(): ReactElement {
             <img
               src={prototypingLogo}
               style={{ width: '300px', height: 'auto' }}
-              alt="FleetWatch Logo"
+              alt="Device Monitor Logo"
             />
           </Box>
         ),

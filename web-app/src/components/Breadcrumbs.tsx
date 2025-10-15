@@ -30,7 +30,7 @@ export const Breadcrumbs: FunctionComponent = (): ReactElement => {
 
   function getBreadcrumbs(): Array<BreadcrumbGroupProps.Item> {
     const basePath: BreadcrumbGroupProps.Item = {
-      text: 'FleetWatch',
+      text: 'device-monitor',
       href: '/'
     };
 

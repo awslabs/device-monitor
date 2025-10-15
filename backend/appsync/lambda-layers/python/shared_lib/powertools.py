@@ -24,11 +24,11 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 # Initialize powertools
 logger = Logger()
 tracer = Tracer()
-metrics = Metrics(namespace="FleetWatch")
+metrics = Metrics(namespace="Device Monitor")
 
 # Default dimensions similar to the TypeScript version
 default_dimensions = {
-    "service": "fleetwatch"
+    "service": "Device Monitor"
 }
 
 def add_monitoring_details(additional_dimensions=None):

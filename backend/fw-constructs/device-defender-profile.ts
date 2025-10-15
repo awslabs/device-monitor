@@ -36,7 +36,7 @@ export class DeviceDefenderProfileConstruct extends Construct {
   ) {
     super(scope, id);
 
-    this.securityProfileName = 'FleetWatchSecurityProfile';
+    this.securityProfileName = 'Device MonitorSecurityProfile';
     this.securityProfileArn = `arn:aws:iot:${props.region}:${props.accountId}:securityprofile/${this.securityProfileName}`;
 
     // Create custom resource provider
@@ -91,7 +91,7 @@ def create_security_profile(iot_client, security_profile_name, all_things_arn):
     """Create Device Defender security profile"""
     logger.info(f"Creating security profile: {security_profile_name}")
     
-    # Define security behaviors for FleetWatch
+    # Define security behaviors for Device Monitor
     behaviors = [
         {
             'name': 'ConnectionAttempts',
@@ -126,7 +126,7 @@ def create_security_profile(iot_client, security_profile_name, all_things_arn):
         # Create security profile
         response = iot_client.create_security_profile(
             securityProfileName=security_profile_name,
-            securityProfileDescription='FleetWatch Device Defender security profile for monitoring IoT device behavior and security metrics',
+            securityProfileDescription='Device Monitor Device Defender security profile for monitoring IoT device behavior and security metrics',
             behaviors=behaviors
         )
         

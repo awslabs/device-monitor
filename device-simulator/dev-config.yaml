@@ -120,7 +120,7 @@ device:
     - "zigbee"
     - "bluetooth"
 
-  # Possible device types by category - aligned with FleetWatch
+  # Possible device types by category - aligned with Device Monitor
   device_types:
     sensor:
       - "temperature_sensor"
@@ -195,7 +195,7 @@ device:
     - code: "KR"
       name: "South Korea"
 
-# Retained Message Configuration - aligned with FleetWatch
+# Retained Message Configuration - aligned with Device Monitor
 retained_messages:
   # Base topic patterns for retained messages
   topic_patterns:

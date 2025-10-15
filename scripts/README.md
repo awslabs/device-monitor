@@ -1,6 +1,6 @@
-# FleetWatch Deployment Scripts
+# Device Monitor Deployment Scripts
 
-This directory contains scripts used during the deployment process of FleetWatch.
+This directory contains scripts used during the deployment process of Device Monitor.
 
 ## Scripts
 
@@ -43,10 +43,10 @@ If you're not seeing data in the Defender Metrics tabs after deployment:
 
 2. Check if the security profile is attached to all things:
    ```bash
-   aws iot list-targets-for-security-profile --security-profile-name FleetWatchDefenderProfile
+   aws iot list-targets-for-security-profile --security-profile-name Device MonitorDefenderProfile
    ```
 
-3. Wait for data collection - it may take several hours for metrics to appear in CloudWatch and the FleetWatch UI.
+3. Wait for data collection - it may take several hours for metrics to appear in CloudWatch and the Device Monitor UI.
 
 4. Simulate events to generate metrics:
    - Connection attempts: Restart your device simulator multiple times

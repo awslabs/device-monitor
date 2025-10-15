@@ -202,7 +202,7 @@ export const cloudscapeDarkTheme: Theme = {
 };
 
 export const amplifyTheme: WebTheme = createTheme({
-  name: 'fleetwatch',
+  name: 'Device Monitor',
   tokens: {
     fonts: {
       default: {

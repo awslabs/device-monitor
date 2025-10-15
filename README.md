@@ -18,9 +18,9 @@ specific language governing permissions and limitations
 under the License.   
 
 
-# FleetWatch - IoT Fleet Management System
+# Device Monitor - AWS IoT Fleet Management System
 
-FleetWatch is a comprehensive IoT device fleet management system built on AWS cloud services. It enables monitoring, management, and analysis of connected devices at scale. **FleetWatch serves as sample customizable solution to help customers get started when AWS IoT FleetHub service will be discontinued starting October 2025.**. This is only sample code and it is not supposed to be used in production environments.
+Device Monitor is a comprehensive IoT device fleet management system built on AWS cloud services. It enables monitoring, management, and analysis of connected devices at scale. **Device Monitor serves as sample customizable solution to help customers get started when AWS IoT FleetHub service will be discontinued starting October 2025.**. This is only sample code and it is not supposed to be used in production environments.
 
 ## Features
 
@@ -36,13 +36,13 @@ FleetWatch is a comprehensive IoT device fleet management system built on AWS cl
 
 ## System Architecture
 
-![FleetWatch Architecture](./fleetwatch-architecture.drawio.png)
+![Device Monitor Architecture](./device-monitor-architecture.drawio.png)
 
-The architecture diagram above illustrates the main components of the FleetWatch system and how they interact with each other.
+The architecture diagram above illustrates the main components of the Device Monitor system and how they interact with each other.
 
 ## FleetHub Replacement
 
-As AWS IoT FleetHub will be discontinued starting October 2025, FleetWatch provides a sample customizable (non-production) replacement with several enhanced capabilities:
+As AWS IoT FleetHub will be discontinued starting October 2025, Device Monitor provides a sample customizable (non-production) replacement with several enhanced capabilities:
 
 - **Superior Filtering**: Advanced filtering capabilities including date-time ranges, which FleetHub lacked
 - **User Preferences**: Ability to save and retrieve user view preferences, including favorite devices and filters
@@ -83,8 +83,8 @@ As AWS IoT FleetHub will be discontinued starting October 2025, FleetWatch provi
 
 1. Clone the repository:
    ```bash
-   git clone https://gitlab.com/bvvitali/fleetWatch.git
-   cd fleetWatch
+   git clone https://github.com/awslabs/device-monitor
+   cd device-monitor
    ```
 
 2. Install dependencies:
@@ -117,7 +117,7 @@ As AWS IoT FleetHub will be discontinued starting October 2025, FleetWatch provi
 
 ## Device Management
 
-FleetWatch provides comprehensive device management capabilities:
+Device Monitor provides comprehensive device management capabilities:
 
 - **Device Monitoring**: Monitor device connection status and health
 - **Shadow Management**: Update and sync device state
@@ -143,7 +143,7 @@ npm test
 
 ## Architecture Details
 
-FleetWatch uses a serverless architecture built on AWS services:
+Device Monitor uses a serverless architecture built on AWS services:
 
 1. **AWS AppSync**: GraphQL API for data access
 2. **AWS Lambda**: Serverless functions for business logic
